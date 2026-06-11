@@ -1,0 +1,2771 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AlfaBeta · Análisis de Activos v2.0</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0E2340;
+    --navy-soft: #1A3155;
+    --teal: #1F8A8F;
+    --teal-soft: #3FA9AE;
+    --cream: #FAFAF7;
+    --card: #FFFFFF;
+    --text: #1A2433;
+    --text-soft: #5A6B7C;
+    --text-muted: #8A95A3;
+    --border: #E5E9EE;
+    --border-soft: #F0F2F5;
+    --positive: #1F8F5F;
+    --negative: #C84235;
+    --warning: #C4842A;
+    --shadow-sm: 0 1px 2px rgba(14, 35, 64, 0.04), 0 1px 3px rgba(14, 35, 64, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(14, 35, 64, 0.06), 0 2px 4px -1px rgba(14, 35, 64, 0.04);
+    --shadow-lg: 0 10px 25px -3px rgba(14, 35, 64, 0.08), 0 4px 6px -2px rgba(14, 35, 64, 0.04);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body { min-height: 100vh; }
+
+  /* ---------- HEADER ---------- */
+  .header {
+    background: var(--navy);
+    color: white;
+    padding: 28px 48px;
+    border-bottom: 3px solid var(--teal);
+  }
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .brand {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 26px;
+    letter-spacing: -0.5px;
+    color: white;
+  }
+  .brand .accent { color: var(--teal-soft); }
+  .tagline {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* ---------- MAIN ---------- */
+  main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 48px 80px;
+  }
+  @media (max-width: 900px) {
+    main { padding: 24px; }
+    .header { padding: 20px 24px; }
+  }
+
+  /* ---------- CARDS ---------- */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-title {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 4px;
+    letter-spacing: -0.2px;
+  }
+  .card-subtitle {
+    font-size: 13px;
+    color: var(--text-soft);
+    margin-bottom: 20px;
+  }
+
+  /* ---------- SERIES LIST ---------- */
+  .series-uploader { margin-bottom: 24px; }
+  .series-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .serie-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    background: white;
+    display: grid;
+    grid-template-columns: 16px 1fr 200px 110px 32px;
+    gap: 14px;
+    align-items: center;
+    transition: border-color 0.15s ease;
+  }
+  .serie-card.loaded { border-color: var(--positive); background: #F7FBF9; }
+  @media (max-width: 800px) {
+    .serie-card {
+      grid-template-columns: 16px 1fr 32px;
+      gap: 8px;
+    }
+    .serie-label-wrap, .serie-bench-wrap { grid-column: 2 / -1; }
+  }
+  .serie-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+  .serie-drop {
+    position: relative;
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    background: var(--border-soft);
+    cursor: pointer;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    transition: all 0.15s ease;
+  }
+  .serie-drop:hover, .serie-drop.dragover {
+    border-color: var(--teal);
+    background: #F0F8F8;
+  }
+  .serie-drop.loaded {
+    border-color: var(--positive);
+    border-style: solid;
+    background: white;
+  }
+  .serie-drop input[type="file"] { display: none; }
+  .serie-drop-empty {
+    font-size: 13px;
+    color: var(--text-soft);
+  }
+  .serie-drop-empty strong { color: var(--navy); }
+  .serie-drop-loaded {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+  }
+  .serie-file-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    word-break: break-all;
+  }
+  .serie-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .serie-label-wrap input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    background: white;
+  }
+  .serie-label-wrap input:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(31, 138, 143, 0.1);
+  }
+  .serie-bench-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-soft);
+    cursor: pointer;
+    user-select: none;
+  }
+  .serie-bench-wrap input[type="radio"] {
+    accent-color: var(--navy);
+    cursor: pointer;
+  }
+  .serie-bench-wrap.checked {
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .serie-remove {
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .serie-remove:hover { background: #FDF1F0; color: var(--negative); }
+
+  .btn-add-serie {
+    padding: 10px 18px;
+    border: 1px dashed var(--border);
+    background: white;
+    color: var(--text-soft);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+    width: 100%;
+  }
+  .btn-add-serie:hover {
+    border-color: var(--teal);
+    color: var(--teal);
+    background: #F0F8F8;
+  }
+  .btn-add-serie:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .bench-status {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: var(--cream);
+    border-radius: 6px;
+    border-left: 3px solid var(--teal);
+  }
+  .bench-status.warn { border-left-color: var(--warning); }
+
+  /* ---------- PARAMS ---------- */
+  .params-card { margin-bottom: 24px; }
+  .params-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 700px) { .params-row { grid-template-columns: 1fr; } }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label {
+    font-size: 12px;
+    color: var(--text-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+  }
+  .field input {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    color: var(--text);
+    background: white;
+    transition: border-color 0.15s ease;
+  }
+  .field input:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(31, 138, 143, 0.1);
+  }
+  .actions-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    letter-spacing: 0.2px;
+  }
+  .btn-primary {
+    background: var(--navy);
+    color: white;
+  }
+  .btn-primary:hover:not(:disabled) { background: var(--navy-soft); }
+  .btn-primary:disabled { background: #B5BFC9; cursor: not-allowed; }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-soft);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover {
+    color: var(--navy);
+    border-color: var(--navy);
+  }
+
+  .error-msg {
+    background: #FDF1F0;
+    border: 1px solid #F0C5C0;
+    color: var(--negative);
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-top: 16px;
+    font-size: 13px;
+    line-height: 1.5;
+    display: none;
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .error-msg.visible { display: block; }
+  .error-msg strong { display: block; margin-bottom: 4px; color: #8A1F15; font-weight: 600; }
+
+  /* ---------- RESULTS ---------- */
+  .results { display: none; }
+  .results.visible { display: block; }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--navy);
+    margin: 40px 0 12px;
+    letter-spacing: -0.4px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 20px;
+    background: var(--teal);
+    border-radius: 2px;
+  }
+  .section-note {
+    font-size: 13px;
+    color: var(--text-soft);
+    margin: 0 0 16px;
+  }
+
+  /* ---------- TABLE ---------- */
+  .table-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+  }
+  th {
+    text-align: right;
+    padding: 12px 14px;
+    background: var(--cream);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-soft);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  th:first-child { text-align: left; }
+  td {
+    padding: 11px 14px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border-soft);
+    font-family: 'IBM Plex Mono', monospace;
+    text-align: right;
+    white-space: nowrap;
+  }
+  td:first-child {
+    font-family: 'IBM Plex Sans', sans-serif;
+    color: var(--text);
+    text-align: left;
+    font-weight: 500;
+  }
+  tr:last-child td { border-bottom: none; }
+  td.pos { color: var(--positive); }
+  td.neg { color: var(--negative); }
+  tr.bench-row { background: rgba(31, 138, 143, 0.05); }
+  tr.bench-row td:first-child { font-weight: 600; }
+
+  .serie-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--teal);
+    color: white;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .badge.warn { background: var(--warning); }
+  .badge.muted { background: var(--text-muted); }
+
+  /* ---------- INFO BUTTON & TOOLTIP ---------- */
+  .info-btn {
+    width: 16px;
+    height: 16px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .info-btn:hover { color: var(--teal); background: #F0F8F8; }
+  .info-btn svg { width: 14px; height: 14px; }
+  .tooltip-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(14, 35, 64, 0.4);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    backdrop-filter: blur(2px);
+  }
+  .tooltip-overlay.visible { display: flex; }
+  .tooltip-card {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .tooltip-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 22px;
+    line-height: 1;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+  }
+  .tooltip-close:hover { background: var(--border-soft); color: var(--navy); }
+  .tooltip-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    color: var(--navy);
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding-right: 32px;
+  }
+  .tooltip-section { margin-bottom: 16px; }
+  .tooltip-section:last-child { margin-bottom: 0; }
+  .tooltip-section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--teal);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .tooltip-section-body {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  .tooltip-formula {
+    font-family: 'IBM Plex Mono', monospace;
+    background: var(--cream);
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--navy);
+    border-left: 3px solid var(--teal);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* ---------- TABS ---------- */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .tab {
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    color: var(--text-soft);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: -1px;
+  }
+  .tab:hover { color: var(--navy); }
+  .tab.active {
+    color: var(--navy);
+    border-bottom-color: var(--teal);
+    font-weight: 600;
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ---------- ROLLING WINDOW BAR ---------- */
+  .rolling-window-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .rolling-window-bar.hidden { display: none; }
+  .rolling-window-label {
+    font-size: 12px;
+    color: var(--text-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-weight: 600;
+  }
+  .rolling-window-buttons {
+    display: inline-flex;
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .rolling-win-btn {
+    padding: 7px 16px;
+    border: none;
+    background: transparent;
+    color: var(--text-soft);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+  }
+  .rolling-win-btn:hover { color: var(--navy); }
+  .rolling-win-btn.active {
+    background: var(--navy);
+    color: white;
+    font-weight: 600;
+  }
+
+  /* ---------- CHARTS ---------- */
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .chart-grid.two-cols { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 900px) {
+    .chart-grid.two-cols { grid-template-columns: 1fr; }
+  }
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .chart-card-title {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    color: var(--navy);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .chart-card-subtitle {
+    font-size: 12px;
+    color: var(--text-soft);
+    margin-bottom: 12px;
+  }
+  .plotly-chart { width: 100%; height: 380px; }
+  .plotly-chart.tall { height: 460px; }
+
+  /* ---------- RESULTS TOOLBAR & PRINT ---------- */
+  .results-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .results-toolbar .btn {
+    padding: 9px 16px;
+    font-size: 13px;
+  }
+  .toolbar-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* Cabecera de impresión: oculta por defecto, visible solo en @media print */
+  .print-header {
+    display: none;
+  }
+
+  .panel-print-label {
+    display: none;
+  }
+
+  /* =====================================================
+     @media print — A4 landscape
+     ===================================================== */
+  @page {
+    size: A4 landscape;
+    margin: 12mm 10mm 14mm 10mm;
+  }
+  @media print {
+    /* Reset base */
+    html, body {
+      background: white !important;
+      color: #1A2433 !important;
+      font-size: 9.5pt;
+      line-height: 1.35;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    body { padding: 0 !important; }
+
+    /* Ocultar UI no relevante */
+    .header,
+    .series-uploader,
+    .params-card,
+    .results-toolbar,
+    .no-print,
+    .info-btn,
+    .rolling-window-bar,
+    .tabs,
+    #tooltip-overlay,
+    .btn,
+    .btn-add-serie,
+    .serie-remove {
+      display: none !important;
+    }
+
+    /* Cabecera de impresión: visible y fija arriba */
+    .print-header {
+      display: block !important;
+      position: relative;
+      padding: 8px 0 10px;
+      border-bottom: 1.5px solid #0E2340;
+      margin-bottom: 12px;
+    }
+    .print-header .ph-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: 'Fraunces', serif;
+    }
+    .print-header .ph-title {
+      font-size: 14pt;
+      font-weight: 600;
+      color: #0E2340;
+      letter-spacing: -0.2px;
+    }
+    .print-header .ph-date {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9pt;
+      color: #5A6B7C;
+    }
+    .print-header .ph-series {
+      margin-top: 4px;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 9pt;
+      color: #5A6B7C;
+    }
+    .print-header .ph-series strong { color: #0E2340; }
+
+    /* Main sin paddings grandes */
+    main {
+      padding: 0 !important;
+      max-width: none !important;
+    }
+
+    /* Mostrar todas las tab panels, no solo la activa */
+    .tab-panel {
+      display: block !important;
+      page-break-inside: avoid;
+      margin-top: 14px;
+    }
+    .panel-print-label {
+      display: block !important;
+      font-family: 'Fraunces', serif;
+      font-size: 12pt;
+      color: #0E2340;
+      margin: 14px 0 8px;
+      font-weight: 600;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #E5E9EE;
+    }
+
+    /* Section titles */
+    .section-title {
+      font-size: 13pt !important;
+      margin: 18px 0 8px !important;
+      page-break-after: avoid;
+    }
+    .section-title::before { display: none; }
+    .section-note { font-size: 8.5pt; margin-bottom: 8px; }
+
+    /* Saltos de página entre secciones grandes */
+    #regime-section,
+    #scatter-section,
+    #rolling-section,
+    .chart-card {
+      page-break-inside: avoid;
+    }
+    /* Salto antes de Drawdowns y antes de Heatmap */
+    #tabs-dd { page-break-before: auto; }
+
+    /* Cards y tablas más compactas */
+    .card,
+    .chart-card,
+    .table-wrap {
+      box-shadow: none !important;
+      border: 1px solid #E5E9EE !important;
+      page-break-inside: avoid;
+    }
+    .chart-card { padding: 10px 12px !important; }
+    .chart-card-title { font-size: 10.5pt !important; margin-bottom: 2px !important; }
+    .chart-card-subtitle { font-size: 8pt !important; margin-bottom: 6px !important; }
+
+    /* Tablas: que se vean compactas pero legibles */
+    table { min-width: 0 !important; }
+    th, td { padding: 5px 7px !important; font-size: 8.5pt !important; }
+    th { font-size: 7.5pt !important; }
+    .badge { font-size: 7pt !important; padding: 1px 5px !important; }
+    .serie-dot { width: 8px !important; height: 8px !important; }
+
+    /* Gráficos Plotly: altura razonable para landscape */
+    .plotly-chart { height: 240px !important; }
+    .plotly-chart.tall { height: 300px !important; }
+
+    /* Grids en dos columnas se mantienen */
+    .chart-grid { gap: 10px !important; }
+
+    /* Texto positivo/negativo se mantiene con color */
+    td.pos, .pos { color: #1F8F5F !important; }
+    td.neg, .neg { color: #C84235 !important; }
+
+    /* Quitar fondos teñidos en filas */
+    tr.bench-row { background: #F4FAFA !important; }
+
+    /* Resultados sin display:none */
+    .results { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cabecera solo visible al imprimir -->
+<div class="print-header" id="print-header" aria-hidden="true"></div>
+
+<header class="header">
+  <div class="header-inner">
+    <div>
+      <div class="brand">Alfa<span class="accent">Beta</span> · Análisis de Activos</div>
+      <div class="tagline">De la beta del mercado al alfa de tus decisiones</div>
+    </div>
+    <div style="font-size: 11px; color: rgba(255,255,255,0.5); font-family: 'IBM Plex Mono', monospace;">v2.0 · Multi-activo</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============== SERIES UPLOADER ============== -->
+  <div class="card series-uploader">
+    <div class="card-title">Series a analizar</div>
+    <div class="card-subtitle">Hasta 5 series · marca una como Benchmark para activar métricas relativas (alfa, beta, TE…)</div>
+    <div class="series-list" id="series-list"></div>
+    <button class="btn-add-serie" id="btn-add-serie">+ Añadir serie</button>
+    <div class="bench-status" id="bench-status" style="display: none;"></div>
+  </div>
+
+  <!-- ============== PARAMS ============== -->
+  <div class="card params-card">
+    <div class="params-row">
+      <div class="field">
+        <label for="rf-input">Tasa libre de riesgo (Rf) anualizada</label>
+        <input type="text" id="rf-input" value="2,50%" placeholder="ej. 2,50%">
+      </div>
+      <div class="field" style="justify-content: end;">
+        <label>&nbsp;</label>
+        <div style="font-size: 12px; color: var(--text-muted); padding: 10px 0;">Se aplicará a todos los activos por igual</div>
+      </div>
+    </div>
+    <div class="actions-row">
+      <button class="btn btn-primary" id="btn-compute" disabled>Calcular métricas</button>
+      <button class="btn btn-secondary" id="btn-reset">Limpiar todo</button>
+    </div>
+    <div class="error-msg" id="error-msg"></div>
+  </div>
+
+  <!-- ============== RESULTS ============== -->
+  <div class="results" id="results">
+
+    <div class="results-toolbar no-print">
+      <button class="btn btn-secondary" id="btn-export-pdf">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 6px;">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="12" y1="18" x2="12" y2="12"/>
+          <polyline points="9 15 12 12 15 15"/>
+        </svg>
+        Exportar a PDF
+      </button>
+      <span class="toolbar-hint">Se abrirá el diálogo de impresión. Elige "Guardar como PDF" como destino.</span>
+    </div>
+
+    <h2 class="section-title">Resumen</h2>
+    <div class="table-wrap">
+      <table id="table-summary"><thead></thead><tbody></tbody></table>
+    </div>
+
+    <h2 class="section-title">Rentabilidades por ventana</h2>
+    <div class="section-note">Filas = series, columnas = ventanas. Solo se muestran las ventanas con histórico suficiente.</div>
+    <div class="table-wrap">
+      <table id="table-windows"><thead></thead><tbody></tbody></table>
+    </div>
+
+    <h2 class="section-title">Riesgo absoluto</h2>
+    <div class="table-wrap">
+      <table id="table-risk"><thead></thead><tbody></tbody></table>
+    </div>
+
+    <h2 class="section-title">Ratios ajustados al riesgo</h2>
+    <div class="table-wrap">
+      <table id="table-ratios"><thead></thead><tbody></tbody></table>
+    </div>
+
+    <div id="bench-section" style="display: none;">
+      <h2 class="section-title">Análisis vs benchmark</h2>
+      <div class="section-note" id="bench-note"></div>
+      <div class="table-wrap">
+        <table id="table-bench"><thead></thead><tbody></tbody></table>
+      </div>
+    </div>
+
+    <div id="regime-section" style="display: none;">
+      <h2 class="section-title">Análisis por regímenes</h2>
+      <div class="section-note">Cómo se comporta cada activo en mercados alcistas vs bajistas (definidos por el benchmark).</div>
+
+      <div class="rolling-window-bar">
+        <span class="rolling-window-label">Umbral bear:</span>
+        <div class="rolling-window-buttons" id="regime-threshold-selector">
+          <button class="rolling-win-btn" data-th="-0.05">−5%</button>
+          <button class="rolling-win-btn active" data-th="-0.10">−10%</button>
+          <button class="rolling-win-btn" data-th="-0.15">−15%</button>
+          <button class="rolling-win-btn" data-th="-0.20">−20%</button>
+        </div>
+        <span style="font-size: 12px; color: var(--text-muted);" id="regime-threshold-help">Bear: días en que el benchmark está en drawdown ≥ este valor desde su máximo histórico</span>
+      </div>
+
+      <div class="chart-card" style="margin-bottom: 24px;">
+        <div class="chart-card-title">Línea de tiempo del benchmark</div>
+        <div class="chart-card-subtitle" id="regime-timeline-sub">Zonas sombreadas en rojo = periodos bear</div>
+        <div class="plotly-chart" id="chart-regime-timeline"></div>
+      </div>
+
+      <h3 style="font-family: 'Fraunces', serif; font-size: 18px; color: var(--navy); margin: 24px 0 8px; font-weight: 600;">Método B · Bull / Bear por drawdown</h3>
+      <div class="section-note" id="regime-b-note">Periodos completos en bull vs bear según el drawdown del benchmark.</div>
+      <div class="table-wrap">
+        <table id="table-regime-b"><thead></thead><tbody></tbody></table>
+      </div>
+
+      <h3 style="font-family: 'Fraunces', serif; font-size: 18px; color: var(--navy); margin: 32px 0 8px; font-weight: 600;">Método A · Días Up / Down del benchmark</h3>
+      <div class="section-note">Clasificación día a día por signo del retorno del benchmark.</div>
+      <div class="table-wrap">
+        <table id="table-regime-a"><thead></thead><tbody></tbody></table>
+      </div>
+    </div>
+
+    <h2 class="section-title">Mejor y peor</h2>
+    <div class="section-note">Para cada serie: mejor y peor día, mes natural y año natural.</div>
+    <div class="table-wrap">
+      <table id="table-extremes"><thead></thead><tbody></tbody></table>
+    </div>
+
+    <h2 class="section-title">Drawdowns Top 5</h2>
+    <div class="tabs" id="tabs-dd"></div>
+    <div id="panels-dd"></div>
+
+    <h2 class="section-title">Gráficos comparativos</h2>
+
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-card-title">Evolución en base 100</div>
+        <div class="chart-card-subtitle">Todas las series superpuestas desde el primer dato disponible de cada una</div>
+        <div class="plotly-chart" id="chart-base100"></div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Underwater chart</h2>
+    <div class="section-note" id="underwater-note">Drawdown (%) a lo largo del tiempo, desde el último máximo histórico.</div>
+    <div class="chart-card" id="underwater-single-card">
+      <div class="plotly-chart" id="chart-underwater"></div>
+    </div>
+    <div class="tabs" id="tabs-underwater" style="display: none;"></div>
+    <div id="panels-underwater" style="display: none;"></div>
+
+    <h2 class="section-title">Distribución de retornos diarios</h2>
+    <div class="tabs" id="tabs-hist"></div>
+    <div id="panels-hist"></div>
+
+    <div id="rolling-section">
+      <h2 class="section-title">Métricas rolling</h2>
+      <div class="section-note" id="rolling-note">CAGR, vol y Sharpe sobre ventanas móviles. Beta rolling solo para activos con benchmark.</div>
+
+      <div class="rolling-window-bar" id="rolling-window-bar">
+        <span class="rolling-window-label">Ventana móvil:</span>
+        <div class="rolling-window-buttons" id="rolling-window-selector">
+          <button class="rolling-win-btn active" data-window="1Y">1 año</button>
+          <button class="rolling-win-btn" data-window="3Y">3 años</button>
+          <button class="rolling-win-btn" data-window="5Y">5 años</button>
+        </div>
+      </div>
+
+      <div class="chart-grid two-cols">
+        <div class="chart-card">
+          <div class="chart-card-title">Rentabilidad rolling anualizada</div>
+          <div class="chart-card-subtitle" id="sub-rolling-return">CAGR sobre ventana móvil</div>
+          <div class="plotly-chart" id="chart-rolling-return"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-title">Volatilidad rolling anualizada</div>
+          <div class="chart-card-subtitle" id="sub-rolling-vol">Desviación típica anualizada</div>
+          <div class="plotly-chart" id="chart-rolling-vol"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-title">Sharpe rolling</div>
+          <div class="chart-card-subtitle" id="sub-rolling-sharpe">(Retorno − Rf) / volatilidad</div>
+          <div class="plotly-chart" id="chart-rolling-sharpe"></div>
+        </div>
+        <div class="chart-card" id="card-rolling-beta" style="display: none;">
+          <div class="chart-card-title">Beta rolling</div>
+          <div class="chart-card-subtitle" id="sub-rolling-beta">Activos vs benchmark</div>
+          <div class="plotly-chart" id="chart-rolling-beta"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="scatter-section" style="display: none;">
+      <h2 class="section-title">Activo vs Benchmark (scatter)</h2>
+      <div class="section-note">Retornos diarios + recta de regresión. Selecciona el activo.</div>
+      <div class="tabs" id="tabs-scatter"></div>
+      <div id="panels-scatter"></div>
+    </div>
+
+    <h2 class="section-title">Heatmap de rentabilidades mensuales</h2>
+    <div class="section-note">Una pestaña por serie.</div>
+    <div class="tabs" id="tabs-heat"></div>
+    <div id="panels-heat"></div>
+
+  </div>
+</main>
+
+<!-- Tooltip overlay -->
+<div class="tooltip-overlay" id="tooltip-overlay">
+  <div class="tooltip-card">
+    <button class="tooltip-close" id="tooltip-close">×</button>
+    <div class="tooltip-title" id="tooltip-title"></div>
+    <div class="tooltip-section">
+      <div class="tooltip-section-label">Definición</div>
+      <div class="tooltip-section-body" id="tooltip-def"></div>
+    </div>
+    <div class="tooltip-section">
+      <div class="tooltip-section-label">Fórmula</div>
+      <div class="tooltip-formula" id="tooltip-formula"></div>
+    </div>
+    <div class="tooltip-section">
+      <div class="tooltip-section-label">Interpretación</div>
+      <div class="tooltip-section-body" id="tooltip-interp"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// =============================================================================
+// DEFINICIONES (TOOLTIPS)
+// =============================================================================
+const DEF = {
+  cagr: { title: "Rentabilidad anualizada (CAGR)", def: "Tasa de crecimiento compuesta anual del activo durante el periodo analizado. Convierte la rentabilidad total acumulada en una tasa anual equivalente.", formula: "CAGR = (VL_final / VL_inicial)^(1/años) − 1", interp: "Es la tasa anual constante que, capitalizada, lleva del VL inicial al final. Comparable entre activos con periodos distintos." },
+  total: { title: "Rentabilidad total acumulada", def: "Variación porcentual del valor liquidativo entre el inicio y el final del periodo analizado, sin anualizar.", formula: "Total = (VL_final / VL_inicial) − 1", interp: "Sirve para periodos cortos (< 1 año) donde anualizar exagera el dato. Para comparar periodos distintos, usar CAGR." },
+  vol: { title: "Volatilidad anualizada", def: "Desviación típica de los retornos diarios, escalada a base anual. Mide la dispersión total de los retornos en torno a su media.", formula: "σ_anual = σ_diaria × √252", interp: "Trata simétricamente subidas y bajadas. Una vol del 15% anual implica que ~2/3 de los retornos anuales se moverán ±15% en torno a la media." },
+  dvol: { title: "Volatilidad downside (semidesviación)", def: "Volatilidad calculada solo sobre los retornos negativos (o por debajo de un objetivo). Penaliza la caída, no la subida.", formula: "σ_d = √(Σ min(r − 0, 0)² / n) × √252", interp: "Aproximación más fiel al riesgo percibido por el cliente: la subida no es 'riesgo'. Es el denominador del ratio Sortino." },
+  var95: { title: "Value at Risk 95% (histórico)", def: "Pérdida máxima esperada en un día con un 95% de confianza, calculada como el percentil 5 de los retornos diarios históricos.", formula: "VaR₉₅ = percentil 5% de la serie de retornos diarios", interp: "1 de cada 20 días el activo perderá más de este porcentaje. No dice cuánto se pierde en ese 5% peor (eso lo mide el CVaR)." },
+  var99: { title: "Value at Risk 99% (histórico)", def: "Pérdida máxima esperada en un día con un 99% de confianza, calculada como el percentil 1 de los retornos diarios históricos.", formula: "VaR₉₉ = percentil 1% de la serie de retornos diarios", interp: "1 de cada 100 días el activo perderá más de este porcentaje. Más conservador que el VaR 95%, capta mejor los eventos extremos." },
+  cvar95: { title: "CVaR 95% (Expected Shortfall)", def: "Media de las pérdidas en el peor 5% de los días. Responde a la pregunta: cuando el día va mal de verdad, ¿cuánto se pierde de media?", formula: "CVaR₉₅ = media(retornos | retorno ≤ VaR₉₅)", interp: "Más robusto que el VaR porque incorpora la gravedad del peor 5%, no solo el umbral. Métrica coherente desde el punto de vista del riesgo." },
+  cvar99: { title: "CVaR 99% (Expected Shortfall)", def: "Media de las pérdidas en el peor 1% de los días. Mide la pérdida media en eventos de cola extrema.", formula: "CVaR₉₉ = media(retornos | retorno ≤ VaR₉₉)", interp: "Muy relevante en activos con colas gruesas (alta curtosis). Útil para estresar carteras frente a crashes." },
+  skew: { title: "Asimetría (Skewness)", def: "Mide la asimetría de la distribución de retornos. Skew positivo = cola derecha más larga (más subidas extremas que bajadas). Skew negativo = cola izquierda más larga.", formula: "Skew = E[(r − μ)³] / σ³", interp: "Skew negativo es la firma típica de activos con riesgo de cola (renta variable, crédito). Skew positivo es deseable: subidas grandes ocasionales y bajadas controladas." },
+  kurt: { title: "Curtosis exceso", def: "Mide cuán pesadas son las colas de la distribución frente a una normal. Curtosis exceso > 0 indica colas más gruesas que la normal (más eventos extremos de los esperados).", formula: "Kurt_exceso = E[(r − μ)⁴] / σ⁴ − 3", interp: "Casi todos los activos financieros tienen curtosis exceso positiva. Valores > 3 indican colas muy gruesas: hay más cisnes negros de lo que la vol sugiere." },
+  maxdd: { title: "Máximo drawdown", def: "Mayor caída porcentual sufrida desde un máximo histórico hasta el siguiente valle, antes de recuperar ese máximo.", formula: "MaxDD = min(VL_t / max(VL₀…VL_t) − 1)", interp: "El peor 'dolor' que habría sufrido un inversor entrando justo en el peor momento. Métrica clave para perfilar tolerancia al riesgo de un cliente." },
+  painidx: { title: "Pain Index", def: "Profundidad media del drawdown a lo largo de todo el periodo. Penaliza estar en pérdidas durante mucho tiempo, no solo la magnitud puntual.", formula: "Pain Index = media(|drawdown_t|) sobre todo el periodo", interp: "Mide el sufrimiento medio del inversor. Dos fondos con el mismo MaxDD pueden tener Pain Index muy distintos: el que recupera rápido tiene Pain Index bajo." },
+  ulceridx: { title: "Ulcer Index", def: "Raíz de la media de los drawdowns al cuadrado. Similar al Pain Index pero penaliza más los drawdowns profundos por elevarlos al cuadrado.", formula: "Ulcer = √(media(drawdown_t²)) sobre todo el periodo", interp: "Capta tanto la magnitud como la duración del 'dolor' del inversor. Útil para comparar activos con perfiles de DD distintos." },
+  sharpe: { title: "Ratio de Sharpe", def: "Rentabilidad excedente (sobre la tasa libre de riesgo) por unidad de volatilidad total. La métrica de eficiencia rentabilidad/riesgo más usada del sector.", formula: "Sharpe = (CAGR − Rf) / σ_anual", interp: "> 1: razonable. > 2: muy bueno. > 3: excepcional. < 0: el activo no compensa el riesgo asumido. Trata vol al alza y a la baja por igual (limitación)." },
+  sortino: { title: "Ratio de Sortino", def: "Como el Sharpe pero usando volatilidad downside en el denominador. Solo penaliza la dispersión a la baja, no la subida.", formula: "Sortino = (CAGR − Rf) / σ_downside", interp: "Más justo que Sharpe para fondos asimétricos: un activo con subidas explosivas y bajadas controladas saldrá mejor parado. Suele ser mayor que el Sharpe." },
+  calmar: { title: "Ratio de Calmar", def: "Rentabilidad anualizada dividida por el máximo drawdown. Mide cuánta rentabilidad se obtiene por cada unidad de 'peor dolor' sufrido.", formula: "Calmar = CAGR / |MaxDD|", interp: "> 0,5 es razonable, > 1 es muy bueno. Especialmente útil para evaluar estrategias trend-following o gestión alternativa donde el MaxDD es la métrica de riesgo clave." },
+  omega: { title: "Omega Ratio", def: "Ratio entre la probabilidad ponderada de ganancias y la de pérdidas respecto a un umbral. A diferencia de Sharpe, usa toda la distribución (no solo media y varianza).", formula: "Omega = Σ max(r − T, 0) / Σ max(T − r, 0)", interp: "Omega = 1 indica neutralidad respecto al umbral. > 1 favorable. Más informativo que Sharpe cuando la distribución no es normal." },
+  martin: { title: "Ratio Martin (Ulcer Sharpe)", def: "Rentabilidad excedente dividida por el Ulcer Index. Análogo al Sharpe pero usando una medida de riesgo basada en drawdowns en lugar de volatilidad.", formula: "Martin = (CAGR − Rf) / Ulcer Index", interp: "Mide retorno por unidad de sufrimiento (no de volatilidad). Mejor para inversores cuyo riesgo percibido son las caídas prolongadas, no la fluctuación diaria." },
+  beta: { title: "Beta", def: "Sensibilidad del activo a los movimientos del benchmark. Pendiente de la regresión de los retornos del activo sobre los del benchmark.", formula: "β = cov(r_activo, r_bench) / var(r_bench)", interp: "β = 1: se mueve igual que el benchmark. β > 1: amplifica los movimientos. β < 1: amortigua. β negativa: se mueve a la contra (raro)." },
+  alpha: { title: "Alfa de Jensen (anualizada)", def: "Exceso de rentabilidad sobre el que predeciría el modelo CAPM dada la beta. Mide la habilidad del gestor para batir al benchmark ajustando por riesgo sistemático.", formula: "α = (CAGR_a − Rf) − β × (CAGR_b − Rf)", interp: "α > 0: el gestor aporta valor más allá de la exposición de mercado. α < 0: destruye valor." },
+  r2: { title: "R²", def: "Porcentaje de la variabilidad del activo explicado por el benchmark. Cuadrado del coeficiente de correlación.", formula: "R² = ρ²", interp: "R² > 0,90: el benchmark explica casi todo, beta y alfa son fiables. R² < 0,70: el benchmark elegido no representa bien al activo." },
+  corr: { title: "Correlación", def: "Grado en que los retornos del activo y el benchmark se mueven juntos. Va de −1 a +1.", formula: "ρ = cov(r_a, r_b) / (σ_a × σ_b)", interp: "Útil para construir carteras: activos con correlación baja entre sí diversifican. Ojo: la correlación tiende a 1 en crisis." },
+  te: { title: "Tracking Error", def: "Desviación típica anualizada de la diferencia de retornos entre el activo y el benchmark.", formula: "TE = σ(r_activo − r_bench) × √252", interp: "< 2%: muy próximo al benchmark (gestión pasiva o closet tracker). 2-6%: gestión activa moderada. > 6%: gestión activa convencida." },
+  ir: { title: "Information Ratio", def: "Rentabilidad excedente sobre el benchmark dividida por el Tracking Error. Mide la eficiencia de la gestión activa.", formula: "IR = (CAGR_a − CAGR_b) / TE", interp: "> 0,5: buen gestor. > 1: excepcional. < 0: la gestión activa destruye valor frente al índice." },
+  upcap: { title: "Up Capture", def: "Porcentaje del retorno del benchmark que el activo captura en los días en que el benchmark sube.", formula: "Up Capture = media(r_a | r_b > 0) / media(r_b | r_b > 0)", interp: "> 100%: amplifica subidas. 100%: las replica. < 100%: las amortigua." },
+  downcap: { title: "Down Capture", def: "Porcentaje del retorno del benchmark que el activo captura en los días en que el benchmark baja.", formula: "Down Capture = media(r_a | r_b < 0) / media(r_b | r_b < 0)", interp: "< 100%: amortigua caídas (deseable). > 100%: las amplifica. El fondo ideal: Up Capture alto y Down Capture bajo." },
+  m2: { title: "M² (Modigliani)", def: "Convierte el Sharpe en el retorno que habría obtenido el activo si tuviera la misma volatilidad que el benchmark.", formula: "M² = Sharpe_activo × σ_benchmark + Rf", interp: "Si M² > CAGR_benchmark, el activo aporta valor ajustado por riesgo." },
+  betaBull: { title: "Beta condicional Bull", def: "Sensibilidad del activo al benchmark calculada únicamente con los días en régimen alcista (benchmark con drawdown menor al umbral).", formula: "β_bull = cov(r_a | bull, r_b | bull) / var(r_b | bull)", interp: "Lo deseable: β_bull alta (participa de las subidas) y β_bear baja (amortigua las caídas). Asimetría positiva." },
+  betaBear: { title: "Beta condicional Bear", def: "Sensibilidad del activo al benchmark calculada únicamente con los días en régimen bajista (benchmark en drawdown profundo).", formula: "β_bear = cov(r_a | bear, r_b | bear) / var(r_b | bear)", interp: "Si β_bear < β_bull → el fondo aporta downside protection. Si β_bear > β_bull → amplifica las caídas (mal). Métrica clave para diferenciar gestión defensiva." },
+  hitRateB: { title: "Hit Rate", def: "Porcentaje de días en que el activo bate al benchmark dentro del régimen analizado.", formula: "Hit rate = nº días (r_a > r_b) / total días del régimen", interp: "> 50%: consistencia en batir al índice. Suele estar 45-55% incluso en fondos buenos: la ventaja se construye por magnitud, no por frecuencia." },
+  upCondAvg: { title: "Rentabilidad media en días Up (Método A)", def: "Media aritmética de los retornos diarios del activo, considerando solo los días en que el benchmark sube.", formula: "media(r_activo | r_bench > 0)", interp: "Combinada con la del benchmark indica si participa proporcionalmente de las subidas. Si activo > benchmark en días Up, el activo sobreparticipa de las subidas (positivo)." },
+  dnCondAvg: { title: "Rentabilidad media en días Down (Método A)", def: "Media aritmética de los retornos diarios del activo, considerando solo los días en que el benchmark baja.", formula: "media(r_activo | r_bench < 0)", interp: "Si la del activo es menos negativa que la del benchmark, el activo amortigua las caídas. Métrica directa de protección a la baja." }
+};
+
+// =============================================================================
+// CONFIG
+// =============================================================================
+const MAX_SERIES = 5;
+const SERIES_COLORS = ["#0E2340", "#1F8A8F", "#C4842A", "#1F6B47", "#7B4F8F"];
+const TRADING_DAYS = 252;
+
+// =============================================================================
+// STATE
+// =============================================================================
+const STATE = {
+  series: [],     // [{id, fileName, label, data, color, isBenchmark}]
+  nextId: 1,
+  rf: 0.025,
+  rollingWindow: "1Y", // "1Y", "3Y", "5Y"
+  regimeThreshold: -0.10 // umbral bear (drawdown)
+};
+
+// =============================================================================
+// PARSER + DETECCIÓN DE FORMATO
+// =============================================================================
+function parseCSV(text) {
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+  const head = text.slice(0, 200);
+  let nonPrintable = 0;
+  for (let i = 0; i < head.length; i++) {
+    const c = head.charCodeAt(i);
+    if (c === 9 || c === 10 || c === 13) continue;
+    if (c < 32 || c === 0xFFFD) nonPrintable++;
+  }
+  if (nonPrintable > 10) {
+    throw new Error("El fichero no parece ser un CSV de texto plano (contiene caracteres binarios). Exporta desde Investing.com como CSV.");
+  }
+  const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+  if (lines.length < 2) throw new Error("El CSV está vacío o no tiene datos.");
+  const header = parseLine(lines[0]);
+  if (header.length < 2 || header[0].trim() !== "Fecha") {
+    const preview = header.slice(0, 6).map(c => c.length > 30 ? c.slice(0,30) + "…" : c).join(", ");
+    throw new Error(`Cabecera inesperada. Esperaba: Fecha, Último, … Recibí: ${preview}`);
+  }
+  const out = [];
+  for (let i = 1; i < lines.length; i++) {
+    const cols = parseLine(lines[i]);
+    if (cols.length < 2) continue;
+    const date = parseDate(cols[0]);
+    const vl = parseNum(cols[1]);
+    if (!date || !isFinite(vl) || vl <= 0) continue;
+    out.push({ date, vl });
+  }
+  if (out.length < 30) throw new Error(`Histórico demasiado corto: ${out.length} datos válidos (mínimo 30).`);
+  out.sort((a, b) => a.date - b.date);
+  const dedup = [];
+  for (let i = 0; i < out.length; i++) {
+    if (i > 0 && out[i].date.getTime() === out[i-1].date.getTime()) {
+      dedup[dedup.length - 1] = out[i];
+    } else {
+      dedup.push(out[i]);
+    }
+  }
+  return dedup;
+}
+
+function parseLine(line) {
+  const out = [];
+  let cur = "";
+  let inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') { inQ = !inQ; continue; }
+    if (c === "," && !inQ) { out.push(cur); cur = ""; continue; }
+    cur += c;
+  }
+  out.push(cur);
+  return out;
+}
+
+function parseDate(s) {
+  const m = s.trim().match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+  if (!m) return null;
+  const d = new Date(Date.UTC(+m[3], +m[2]-1, +m[1]));
+  return isNaN(d) ? null : d;
+}
+
+function parseNum(s) {
+  if (typeof s !== "string") return NaN;
+  s = s.trim().replace(/\./g, "").replace(",", ".");
+  return parseFloat(s);
+}
+
+function parseRf(s) {
+  s = String(s).trim().replace("%", "").replace(",", ".");
+  const v = parseFloat(s);
+  if (!isFinite(v)) return null;
+  return v / 100;
+}
+
+async function detectFileFormat(file) {
+  if (file.size > 50 * 1024 * 1024) return { kind: 'too-big', message: `Pesa ${(file.size/1024/1024).toFixed(1)} MB. Máximo 50 MB.` };
+  if (file.size < 50) return { kind: 'too-small', message: `Pesa solo ${file.size} bytes. Parece vacío.` };
+  const buf = await file.slice(0, 8).arrayBuffer();
+  const bytes = new Uint8Array(buf);
+  const ext = (file.name.match(/\.([^.]+)$/) || [,""])[1].toLowerCase();
+  if (bytes[0] === 0x50 && bytes[1] === 0x4B && (bytes[2] === 0x03 || bytes[2] === 0x05 || bytes[2] === 0x07)) {
+    if (ext === 'xlsx') return { kind: 'xlsx', message: `"${file.name}" es un Excel (.xlsx). Esta herramienta solo acepta CSV. En Investing.com → "Datos históricos" → icono descarga → CSV.` };
+    return { kind: 'zip', message: `"${file.name}" es un archivo comprimido. Necesito un CSV.` };
+  }
+  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return { kind: 'pdf', message: `"${file.name}" es un PDF.` };
+  if (bytes[0] === 0xD0 && bytes[1] === 0xCF) return { kind: 'xls', message: `"${file.name}" es un Excel antiguo (.xls). Guárdalo como CSV.` };
+  if (bytes[0] === 0xFF && bytes[1] === 0xD8) return { kind: 'image', message: `"${file.name}" es una imagen JPEG.` };
+  if (bytes[0] === 0x89 && bytes[1] === 0x50) return { kind: 'image', message: `"${file.name}" es una imagen PNG.` };
+  if (ext && ext !== 'csv' && ext !== 'txt') return { kind: 'wrong-ext', message: `Extensión inesperada: .${ext}. Solo .csv.` };
+  return { kind: 'ok', message: null };
+}
+
+// =============================================================================
+// MATH UTILITIES
+// =============================================================================
+const Stats = {
+  mean: a => a.reduce((s,b) => s+b, 0) / a.length,
+  sum: a => a.reduce((s,b) => s+b, 0),
+  std: (a, sample=true) => {
+    if (a.length < 2) return NaN;
+    const m = Stats.mean(a);
+    const s = a.reduce((acc,b) => acc + (b-m)*(b-m), 0);
+    return Math.sqrt(s / (sample ? a.length-1 : a.length));
+  },
+  percentile: (a, p) => {
+    if (a.length === 0) return NaN;
+    const sorted = [...a].sort((x,y) => x-y);
+    const idx = (p/100) * (sorted.length-1);
+    const lo = Math.floor(idx), hi = Math.ceil(idx);
+    if (lo === hi) return sorted[lo];
+    return sorted[lo] + (sorted[hi]-sorted[lo]) * (idx-lo);
+  },
+  skewness: a => {
+    const n = a.length;
+    if (n < 3) return NaN;
+    const m = Stats.mean(a), s = Stats.std(a);
+    if (s === 0) return NaN;
+    return (n/((n-1)*(n-2))) * a.reduce((acc,x) => acc + Math.pow((x-m)/s, 3), 0);
+  },
+  excessKurtosis: a => {
+    const n = a.length;
+    if (n < 4) return NaN;
+    const m = Stats.mean(a), s = Stats.std(a);
+    if (s === 0) return NaN;
+    return (n*(n+1)/((n-1)*(n-2)*(n-3))) * a.reduce((acc,x) => acc + Math.pow((x-m)/s,4), 0) - (3*(n-1)*(n-1))/((n-2)*(n-3));
+  },
+  corr: (a, b) => {
+    if (a.length !== b.length || a.length < 2) return NaN;
+    const ma = Stats.mean(a), mb = Stats.mean(b);
+    let n=0, da=0, db=0;
+    for (let i=0; i<a.length; i++) { const xa = a[i]-ma, xb = b[i]-mb; n += xa*xb; da += xa*xa; db += xb*xb; }
+    if (da === 0 || db === 0) return NaN;
+    return n / Math.sqrt(da*db);
+  },
+  cov: (a, b) => {
+    if (a.length !== b.length || a.length < 2) return NaN;
+    const ma = Stats.mean(a), mb = Stats.mean(b);
+    let s = 0;
+    for (let i=0; i<a.length; i++) s += (a[i]-ma)*(b[i]-mb);
+    return s / (a.length-1);
+  },
+  variance: a => { const s = Stats.std(a); return s*s; }
+};
+
+// =============================================================================
+// CÁLCULOS
+// =============================================================================
+function returnsFromPrices(prices) {
+  const r = [];
+  for (let i=1; i<prices.length; i++) r.push(prices[i]/prices[i-1] - 1);
+  return r;
+}
+function drawdownSeries(prices) {
+  const dd = [];
+  let peak = prices[0];
+  for (let i=0; i<prices.length; i++) { if (prices[i] > peak) peak = prices[i]; dd.push(prices[i]/peak - 1); }
+  return dd;
+}
+function cagrFromData(data) {
+  if (data.length < 2) return NaN;
+  const years = (data[data.length-1].date - data[0].date) / (1000*60*60*24*365.25);
+  if (years <= 0) return NaN;
+  const tr = data[data.length-1].vl / data[0].vl;
+  if (years < 1) return tr - 1;
+  return Math.pow(tr, 1/years) - 1;
+}
+function totalReturn(data) { return data[data.length-1].vl/data[0].vl - 1; }
+function maxDD(prices) { return Math.min(...drawdownSeries(prices)); }
+function annualVol(returns) { return Stats.std(returns) * Math.sqrt(TRADING_DAYS); }
+function downsideVol(returns, target=0) {
+  const downs = returns.map(r => Math.min(r-target, 0));
+  return Math.sqrt(Stats.mean(downs.map(x => x*x))) * Math.sqrt(TRADING_DAYS);
+}
+function valueAtRisk(returns, level) { return Stats.percentile(returns, (1-level)*100); }
+function cvar(returns, level) {
+  const v = valueAtRisk(returns, level);
+  const tail = returns.filter(r => r <= v);
+  return tail.length ? Stats.mean(tail) : NaN;
+}
+function painIndex(prices) { return Stats.mean(drawdownSeries(prices).map(Math.abs)); }
+function ulcerIndex(prices) {
+  const dd = drawdownSeries(prices);
+  return Math.sqrt(Stats.mean(dd.map(x => x*x*10000)));
+}
+function sharpe(cagr, vol, rf) { return (!isFinite(vol) || vol === 0) ? NaN : (cagr-rf)/vol; }
+function sortino(cagr, dvol, rf) { return (!isFinite(dvol) || dvol === 0) ? NaN : (cagr-rf)/dvol; }
+function calmar(cagr, mdd) { return (!isFinite(mdd) || mdd === 0) ? NaN : cagr/Math.abs(mdd); }
+function omega(returns, rfDaily) {
+  let up=0, dn=0;
+  for (const r of returns) { const d = r - rfDaily; if (d > 0) up += d; else dn -= d; }
+  return dn === 0 ? Infinity : up/dn;
+}
+function martinRatio(cagr, rf, ulcer) {
+  if (!isFinite(ulcer) || ulcer === 0) return NaN;
+  return (cagr - rf) / (ulcer/100);
+}
+
+function findDrawdownEpisodes(data) {
+  const dates = data.map(d => d.date);
+  const prices = data.map(d => d.vl);
+  const dd = drawdownSeries(prices);
+  const eps = [];
+  let inEp = false;
+  let peakIdx = 0, troughIdx = 0;
+  let troughVal = 0;
+  for (let i=0; i<dd.length; i++) {
+    if (!inEp && dd[i] < 0) {
+      inEp = true;
+      peakIdx = i-1 >= 0 ? i-1 : 0;
+      troughIdx = i;
+      troughVal = dd[i];
+    } else if (inEp) {
+      if (dd[i] < troughVal) { troughVal = dd[i]; troughIdx = i; }
+      if (dd[i] >= 0) {
+        eps.push({
+          magnitude: troughVal, peakDate: dates[peakIdx], troughDate: dates[troughIdx], recoveryDate: dates[i],
+          daysFall: Math.round((dates[troughIdx]-dates[peakIdx])/(1000*60*60*24)),
+          daysRecover: Math.round((dates[i]-dates[troughIdx])/(1000*60*60*24))
+        });
+        inEp = false;
+      }
+    }
+  }
+  if (inEp) {
+    eps.push({
+      magnitude: troughVal, peakDate: dates[peakIdx], troughDate: dates[troughIdx], recoveryDate: null,
+      daysFall: Math.round((dates[troughIdx]-dates[peakIdx])/(1000*60*60*24)),
+      daysRecover: null
+    });
+  }
+  eps.sort((a,b) => a.magnitude - b.magnitude);
+  return eps;
+}
+
+// Vs benchmark
+function alignSeries(a, b) {
+  const mapB = new Map(b.map(d => [d.date.getTime(), d.vl]));
+  const outA = [], outB = [];
+  for (const d of a) {
+    const t = d.date.getTime();
+    if (mapB.has(t)) {
+      outA.push({ date: d.date, vl: d.vl });
+      outB.push({ date: d.date, vl: mapB.get(t) });
+    }
+  }
+  return { a: outA, b: outB };
+}
+function betaCalc(rA, rB) { const v = Stats.variance(rB); return (!isFinite(v) || v === 0) ? NaN : Stats.cov(rA, rB)/v; }
+function alphaJensen(cA, cB, beta, rf) { return (cA-rf) - beta*(cB-rf); }
+function trackingError(rA, rB) { const diff = rA.map((x,i) => x-rB[i]); return Stats.std(diff)*Math.sqrt(TRADING_DAYS); }
+function informationRatio(cA, cB, te) { return (!isFinite(te) || te === 0) ? NaN : (cA-cB)/te; }
+function upCapture(rA, rB) {
+  const idx = rB.map((x,i) => x>0?i:-1).filter(i => i>=0);
+  if (!idx.length) return NaN;
+  const mA = Stats.mean(idx.map(i => rA[i])), mB = Stats.mean(idx.map(i => rB[i]));
+  return mB === 0 ? NaN : mA/mB;
+}
+function downCapture(rA, rB) {
+  const idx = rB.map((x,i) => x<0?i:-1).filter(i => i>=0);
+  if (!idx.length) return NaN;
+  const mA = Stats.mean(idx.map(i => rA[i])), mB = Stats.mean(idx.map(i => rB[i]));
+  return mB === 0 ? NaN : mA/mB;
+}
+function m2(sA, vB, rf) { return sA*vB + rf; }
+
+// Ventanas
+function filterWindow(data, windowName) {
+  if (!data.length) return null;
+  const end = data[data.length-1].date;
+  let start;
+  switch (windowName) {
+    case "YTD": start = new Date(Date.UTC(end.getUTCFullYear(), 0, 1)); break;
+    case "1A": start = new Date(Date.UTC(end.getUTCFullYear()-1, end.getUTCMonth(), end.getUTCDate())); break;
+    case "3A": start = new Date(Date.UTC(end.getUTCFullYear()-3, end.getUTCMonth(), end.getUTCDate())); break;
+    case "5A": start = new Date(Date.UTC(end.getUTCFullYear()-5, end.getUTCMonth(), end.getUTCDate())); break;
+    case "ITD": return data;
+    default: return data;
+  }
+  if (start < data[0].date) return null;
+  return data.filter(d => d.date >= start);
+}
+
+// Mejor / Peor
+function bestWorstDay(data) {
+  const r = [];
+  for (let i=1; i<data.length; i++) r.push({ date: data[i].date, ret: data[i].vl/data[i-1].vl - 1 });
+  r.sort((a,b) => b.ret - a.ret);
+  return { best: r[0], worst: r[r.length-1] };
+}
+function monthlyReturns(data) {
+  const m = new Map();
+  for (const d of data) {
+    const key = `${d.date.getUTCFullYear()}-${String(d.date.getUTCMonth()+1).padStart(2,'0')}`;
+    if (!m.has(key)) m.set(key, []);
+    m.get(key).push(d.vl);
+  }
+  const r = new Map();
+  for (const [k,v] of m) if (v.length >= 2) r.set(k, v[v.length-1]/v[0] - 1);
+  return r;
+}
+function yearlyReturns(data) {
+  const m = new Map();
+  for (const d of data) {
+    const k = d.date.getUTCFullYear();
+    if (!m.has(k)) m.set(k, []);
+    m.get(k).push(d.vl);
+  }
+  const r = new Map();
+  for (const [k,v] of m) if (v.length >= 2) r.set(k, v[v.length-1]/v[0] - 1);
+  return r;
+}
+function bestWorstMonth(data) {
+  const m = monthlyReturns(data);
+  if (!m.size) return null;
+  const arr = [...m.entries()].map(([k,v]) => ({ key:k, ret:v }));
+  arr.sort((a,b) => b.ret-a.ret);
+  return { best: arr[0], worst: arr[arr.length-1] };
+}
+function bestWorstYear(data) {
+  const m = yearlyReturns(data);
+  if (!m.size) return null;
+  const arr = [...m.entries()].map(([k,v]) => ({ key:k, ret:v }));
+  arr.sort((a,b) => b.ret-a.ret);
+  return { best: arr[0], worst: arr[arr.length-1] };
+}
+
+// Rolling
+function rollingCAGR(data, windowDays) {
+  const out = [];
+  for (let i=windowDays; i<data.length; i++) {
+    const sub = data.slice(i-windowDays, i+1);
+    out.push({ date: sub[sub.length-1].date, value: cagrFromData(sub) });
+  }
+  return out;
+}
+function rollingVol(data, windowDays) {
+  const r = returnsFromPrices(data.map(d => d.vl));
+  const dates = data.slice(1).map(d => d.date);
+  const out = [];
+  for (let i=windowDays-1; i<r.length; i++) {
+    const sub = r.slice(i-windowDays+1, i+1);
+    out.push({ date: dates[i], value: Stats.std(sub)*Math.sqrt(TRADING_DAYS) });
+  }
+  return out;
+}
+function rollingSharpe(data, windowDays, rf) {
+  const r = returnsFromPrices(data.map(d => d.vl));
+  const dates = data.slice(1).map(d => d.date);
+  const rfD = rf/TRADING_DAYS;
+  const out = [];
+  for (let i=windowDays-1; i<r.length; i++) {
+    const sub = r.slice(i-windowDays+1, i+1);
+    const vol = Stats.std(sub);
+    if (vol === 0) continue;
+    out.push({ date: dates[i], value: ((Stats.mean(sub)-rfD)/vol)*Math.sqrt(TRADING_DAYS) });
+  }
+  return out;
+}
+function rollingBetaSeries(asset, bench, windowDays) {
+  const { a, b } = alignSeries(asset, bench);
+  const rA = returnsFromPrices(a.map(d => d.vl));
+  const rB = returnsFromPrices(b.map(d => d.vl));
+  const dates = a.slice(1).map(d => d.date);
+  const out = [];
+  for (let i=windowDays-1; i<rA.length; i++) {
+    out.push({ date: dates[i], value: betaCalc(rA.slice(i-windowDays+1, i+1), rB.slice(i-windowDays+1, i+1)) });
+  }
+  return out;
+}
+
+// =============================================================================
+// REGÍMENES (Bull/Bear y días Up/Down)
+// =============================================================================
+
+// Clasifica cada día del benchmark según drawdown vs umbral (number negativo)
+function classifyRegimesB(benchData, threshold) {
+  const prices = benchData.map(d => d.vl);
+  const dd = drawdownSeries(prices);
+  return benchData.map((d, i) => ({
+    date: d.date,
+    dd: dd[i],
+    regime: dd[i] <= threshold ? 'bear' : 'bull'
+  }));
+}
+
+// Devuelve los rangos continuos de días en régimen bear (para sombrear en gráfico)
+function findBearEpisodes(benchData, threshold) {
+  const classified = classifyRegimesB(benchData, threshold);
+  const episodes = [];
+  let startIdx = null;
+  for (let i = 0; i < classified.length; i++) {
+    if (classified[i].regime === 'bear') {
+      if (startIdx === null) startIdx = i;
+    } else {
+      if (startIdx !== null) {
+        episodes.push({ start: classified[startIdx].date, end: classified[i-1].date, days: i - startIdx });
+        startIdx = null;
+      }
+    }
+  }
+  if (startIdx !== null) {
+    episodes.push({ start: classified[startIdx].date, end: classified[classified.length-1].date, days: classified.length - startIdx, ongoing: true });
+  }
+  return episodes;
+}
+
+// Anualizar retornos diarios geométricamente
+function annualizeDailyReturns(returns) {
+  if (returns.length === 0) return NaN;
+  const prod = returns.reduce((p, r) => p * (1 + r), 1);
+  return Math.pow(prod, TRADING_DAYS / returns.length) - 1;
+}
+
+// % días en que r_a > r_b (activo bate al benchmark)
+function hitRateBeating(rA, rB) {
+  if (rA.length === 0) return NaN;
+  let beats = 0;
+  for (let i = 0; i < rA.length; i++) if (rA[i] > rB[i]) beats++;
+  return beats / rA.length;
+}
+
+// Método B: métricas de un activo dividido en bull/bear según benchmark
+function computeRegimeMetricsB(activeData, benchData, threshold) {
+  const { a, b } = alignSeries(activeData, benchData);
+  if (a.length < 30) return null;
+  const benchClass = classifyRegimesB(b, threshold);
+  const rA = returnsFromPrices(a.map(d => d.vl));
+  const rB = returnsFromPrices(b.map(d => d.vl));
+  const bullA = [], bullB = [], bearA = [], bearB = [];
+  for (let i = 0; i < rA.length; i++) {
+    if (benchClass[i+1].regime === 'bull') { bullA.push(rA[i]); bullB.push(rB[i]); }
+    else { bearA.push(rA[i]); bearB.push(rB[i]); }
+  }
+  return {
+    bullDays: bullA.length,
+    bearDays: bearA.length,
+    bullPctTime: bullA.length / rA.length,
+    bearPctTime: bearA.length / rA.length,
+    bullCAGR_A: annualizeDailyReturns(bullA),
+    bearCAGR_A: annualizeDailyReturns(bearA),
+    bullCAGR_B: annualizeDailyReturns(bullB),
+    bearCAGR_B: annualizeDailyReturns(bearB),
+    bullVol_A: bullA.length > 1 ? Stats.std(bullA) * Math.sqrt(TRADING_DAYS) : NaN,
+    bearVol_A: bearA.length > 1 ? Stats.std(bearA) * Math.sqrt(TRADING_DAYS) : NaN,
+    bullBeta: bullA.length > 1 ? betaCalc(bullA, bullB) : NaN,
+    bearBeta: bearA.length > 1 ? betaCalc(bearA, bearB) : NaN,
+    bullHitRate: hitRateBeating(bullA, bullB),
+    bearHitRate: hitRateBeating(bearA, bearB)
+  };
+}
+
+// Método A: métricas de un activo dividido por signo del retorno diario del benchmark
+function computeRegimeMetricsA(activeData, benchData) {
+  const { a, b } = alignSeries(activeData, benchData);
+  if (a.length < 30) return null;
+  const rA = returnsFromPrices(a.map(d => d.vl));
+  const rB = returnsFromPrices(b.map(d => d.vl));
+  const upA = [], upB = [], dnA = [], dnB = [];
+  for (let i = 0; i < rA.length; i++) {
+    if (rB[i] > 0) { upA.push(rA[i]); upB.push(rB[i]); }
+    else if (rB[i] < 0) { dnA.push(rA[i]); dnB.push(rB[i]); }
+  }
+  return {
+    upDays: upA.length,
+    dnDays: dnA.length,
+    upAvg_A: upA.length ? Stats.mean(upA) : NaN,
+    upAvg_B: upB.length ? Stats.mean(upB) : NaN,
+    dnAvg_A: dnA.length ? Stats.mean(dnA) : NaN,
+    dnAvg_B: dnB.length ? Stats.mean(dnB) : NaN,
+    upHitRate: hitRateBeating(upA, upB), // % días activo > bench cuando bench sube
+    dnHitRate: hitRateBeating(dnA, dnB)  // % días activo > bench cuando bench baja
+  };
+}
+
+// =============================================================================
+// FORMAT
+// =============================================================================
+const fmt = {
+  pct: (v, dec=2) => isFinite(v) ? (v*100).toFixed(dec).replace(".", ",") + "%" : "—",
+  num: (v, dec=2) => isFinite(v) ? v.toFixed(dec).replace(".", ",") : "—",
+  date: d => {
+    if (!d) return "—";
+    return `${String(d.getUTCDate()).padStart(2,'0')}.${String(d.getUTCMonth()+1).padStart(2,'0')}.${d.getUTCFullYear()}`;
+  },
+  monthLabel: k => {
+    const [y,m] = k.split("-");
+    const months = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+    return `${months[+m-1]} ${y}`;
+  }
+};
+
+function signClass(v) {
+  if (!isFinite(v)) return "";
+  return v > 0 ? "pos" : (v < 0 ? "neg" : "");
+}
+
+function infoBtn(key) {
+  return `<button class="info-btn" data-info="${key}" aria-label="Info">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+    </svg>
+  </button>`;
+}
+
+// =============================================================================
+// SERIES MANAGEMENT
+// =============================================================================
+function addEmptySerie() {
+  if (STATE.series.length >= MAX_SERIES) return;
+  const id = STATE.nextId++;
+  const colorIdx = STATE.series.length;
+  STATE.series.push({
+    id, fileName: null, label: `Serie ${id}`, data: null,
+    color: SERIES_COLORS[colorIdx], isBenchmark: false
+  });
+  renderSeriesList();
+}
+
+function removeSerie(id) {
+  STATE.series = STATE.series.filter(s => s.id !== id);
+  // Reasignar colores por orden
+  STATE.series.forEach((s, i) => s.color = SERIES_COLORS[i]);
+  renderSeriesList();
+  refreshComputeBtn();
+}
+
+function setBenchmark(id) {
+  STATE.series.forEach(s => s.isBenchmark = (s.id === id));
+  renderSeriesList();
+}
+
+function clearBenchmark() {
+  STATE.series.forEach(s => s.isBenchmark = false);
+  renderSeriesList();
+}
+
+function updateLabel(id, label) {
+  const s = STATE.series.find(x => x.id === id);
+  if (s) s.label = label;
+}
+
+function getBenchmark() {
+  return STATE.series.find(s => s.isBenchmark && s.data);
+}
+
+function refreshComputeBtn() {
+  const ready = STATE.series.filter(s => s.data).length >= 1;
+  document.getElementById("btn-compute").disabled = !ready;
+}
+
+function renderSeriesList() {
+  const list = document.getElementById("series-list");
+  list.innerHTML = "";
+
+  if (STATE.series.length === 0) addEmptySerie();
+
+  STATE.series.forEach(s => {
+    const div = document.createElement("div");
+    div.className = "serie-card" + (s.data ? " loaded" : "");
+    div.dataset.serieId = s.id;
+
+    const benchChecked = s.isBenchmark;
+
+    div.innerHTML = `
+      <div class="serie-color" style="background:${s.color}"></div>
+      <label class="serie-drop ${s.data ? 'loaded' : ''}" data-drop="${s.id}">
+        <input type="file" accept=".csv" data-input="${s.id}">
+        ${s.data
+          ? `<div class="serie-drop-loaded">
+              <div class="serie-file-name">${escapeHtml(s.fileName)}</div>
+              <div class="serie-meta">${s.data.length} obs · ${fmt.date(s.data[0].date)} → ${fmt.date(s.data[s.data.length-1].date)}</div>
+            </div>`
+          : `<div class="serie-drop-empty"><strong>Arrastra el CSV</strong> o haz click</div>`
+        }
+      </label>
+      <div class="serie-label-wrap">
+        <input type="text" value="${escapeHtml(s.label)}" placeholder="Etiqueta" data-label="${s.id}">
+      </div>
+      <label class="serie-bench-wrap ${benchChecked ? 'checked' : ''}">
+        <input type="radio" name="benchmark-radio" data-bench="${s.id}" ${benchChecked ? 'checked' : ''}>
+        Benchmark
+      </label>
+      <button class="serie-remove" data-remove="${s.id}" title="Quitar serie">×</button>
+    `;
+    list.appendChild(div);
+  });
+
+  // Botón añadir
+  document.getElementById("btn-add-serie").disabled = STATE.series.length >= MAX_SERIES;
+
+  // Estado del benchmark
+  const benchEl = document.getElementById("bench-status");
+  const bench = STATE.series.find(s => s.isBenchmark);
+  const hasData = STATE.series.some(s => s.data);
+  if (!hasData) {
+    benchEl.style.display = "none";
+  } else if (bench && bench.data) {
+    benchEl.style.display = "block";
+    benchEl.className = "bench-status";
+    benchEl.innerHTML = `Benchmark activo: <strong>${escapeHtml(bench.label)}</strong>. Las métricas relativas se calcularán contra esta serie.`;
+  } else if (bench && !bench.data) {
+    benchEl.style.display = "block";
+    benchEl.className = "bench-status warn";
+    benchEl.innerHTML = `Hay benchmark marcado, pero todavía no se ha cargado el CSV de esa serie.`;
+  } else {
+    benchEl.style.display = "block";
+    benchEl.className = "bench-status warn";
+    benchEl.innerHTML = `Ningún benchmark marcado. Solo se calcularán métricas absolutas (sin alfa, beta, tracking error…).`;
+  }
+
+  attachSerieListeners();
+}
+
+function escapeHtml(s) {
+  if (s == null) return "";
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"})[c]);
+}
+
+function attachSerieListeners() {
+  document.querySelectorAll("[data-input]").forEach(input => {
+    const id = +input.dataset.input;
+    input.addEventListener("change", e => {
+      if (e.target.files.length > 0) handleSerieFile(id, e.target.files[0]);
+    });
+  });
+  document.querySelectorAll("[data-drop]").forEach(drop => {
+    const id = +drop.dataset.drop;
+    drop.addEventListener("dragover", e => { e.preventDefault(); drop.classList.add("dragover"); });
+    drop.addEventListener("dragleave", () => drop.classList.remove("dragover"));
+    drop.addEventListener("drop", e => {
+      e.preventDefault();
+      drop.classList.remove("dragover");
+      if (e.dataTransfer.files.length > 0) handleSerieFile(id, e.dataTransfer.files[0]);
+    });
+  });
+  document.querySelectorAll("[data-label]").forEach(inp => {
+    const id = +inp.dataset.label;
+    inp.addEventListener("input", e => updateLabel(id, e.target.value));
+  });
+  document.querySelectorAll("[data-bench]").forEach(r => {
+    const id = +r.dataset.bench;
+    r.addEventListener("change", e => { if (e.target.checked) setBenchmark(id); });
+    // Click sobre el wrap también permite desmarcar si ya estaba marcado
+    r.addEventListener("click", e => {
+      const s = STATE.series.find(x => x.id === id);
+      if (s && s.isBenchmark) {
+        // Desactivar
+        e.preventDefault();
+        clearBenchmark();
+      }
+    });
+  });
+  document.querySelectorAll("[data-remove]").forEach(b => {
+    const id = +b.dataset.remove;
+    b.addEventListener("click", () => removeSerie(id));
+  });
+}
+
+async function handleSerieFile(serieId, file) {
+  const s = STATE.series.find(x => x.id === serieId);
+  if (!s) return;
+
+  document.getElementById("error-msg").classList.remove("visible");
+
+  let detection;
+  try { detection = await detectFileFormat(file); }
+  catch (err) { showError(`No se ha podido leer "${file.name}": ${truncateMsg(err.message)}`); return; }
+  if (detection.kind !== 'ok') { showError(detection.message); return; }
+
+  const reader = new FileReader();
+  reader.onerror = () => showError(`Error leyendo "${file.name}".`);
+  reader.onload = e => {
+    try {
+      const data = parseCSV(e.target.result);
+      s.data = data;
+      s.fileName = file.name;
+      // Si label por defecto, intenta deducir de filename
+      if (s.label === `Serie ${s.id}`) {
+        const m = file.name.match(/[A-Z0-9]{8,}/);
+        s.label = m ? m[0] : file.name.replace(/\.csv$/i, "").replace(/^Datos_históricos_/, "");
+      }
+      renderSeriesList();
+      refreshComputeBtn();
+    } catch (err) {
+      showError(`Error procesando "${file.name}": ${truncateMsg(err.message)}`);
+    }
+  };
+  reader.readAsText(file, "UTF-8");
+}
+
+function truncateMsg(msg) {
+  if (typeof msg !== "string") return String(msg);
+  msg = msg.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "");
+  return msg.length > 240 ? msg.slice(0, 240) + "…" : msg;
+}
+
+function showError(msg) {
+  const el = document.getElementById("error-msg");
+  const safe = String(msg).replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "").slice(0, 600);
+  el.innerHTML = "";
+  const lbl = document.createElement("strong");
+  lbl.textContent = "Error";
+  el.appendChild(lbl);
+  el.appendChild(document.createTextNode(safe));
+  el.classList.add("visible");
+}
+
+// =============================================================================
+// RENDER METRICS
+// =============================================================================
+function computeSerieMetrics(s) {
+  const data = s.data;
+  const prices = data.map(d => d.vl);
+  const r = returnsFromPrices(prices);
+  return {
+    serie: s,
+    data,
+    prices,
+    returns: r,
+    start: data[0].date,
+    end: data[data.length-1].date,
+    obs: data.length,
+    years: (data[data.length-1].date - data[0].date) / (1000*60*60*24*365.25),
+    total: totalReturn(data),
+    cagr: cagrFromData(data),
+    vol: annualVol(r),
+    dvol: downsideVol(r),
+    var95: valueAtRisk(r, 0.95),
+    var99: valueAtRisk(r, 0.99),
+    cvar95: cvar(r, 0.95),
+    cvar99: cvar(r, 0.99),
+    skew: Stats.skewness(r),
+    kurt: Stats.excessKurtosis(r),
+    mdd: maxDD(prices),
+    pain: painIndex(prices),
+    ulcer: ulcerIndex(prices),
+    sharpe: sharpe(cagrFromData(data), annualVol(r), STATE.rf),
+    sortino: sortino(cagrFromData(data), downsideVol(r), STATE.rf),
+    calmar: calmar(cagrFromData(data), maxDD(prices)),
+    omega: omega(r, STATE.rf/TRADING_DAYS),
+    martin: martinRatio(cagrFromData(data), STATE.rf, ulcerIndex(prices))
+  };
+}
+
+function computeBenchmarkMetrics(active, bench) {
+  if (!bench || !bench.data) return null;
+  if (active.id === bench.id) return null;
+  const { a, b } = alignSeries(active.data, bench.data);
+  if (a.length < 30) return { partial: true, msg: `Solo ${a.length} fechas comunes.` };
+  const rA = returnsFromPrices(a.map(d => d.vl));
+  const rB = returnsFromPrices(b.map(d => d.vl));
+  const cA = cagrFromData(a);
+  const cB = cagrFromData(b);
+  const vA = annualVol(rA);
+  const vB = annualVol(rB);
+  const beta = betaCalc(rA, rB);
+  return {
+    partial: a.length < active.data.length * 0.8,
+    aligned: a.length,
+    beta,
+    alpha: alphaJensen(cA, cB, beta, STATE.rf),
+    r2: Math.pow(Stats.corr(rA, rB), 2),
+    corr: Stats.corr(rA, rB),
+    te: trackingError(rA, rB),
+    ir: informationRatio(cA, cB, trackingError(rA, rB)),
+    upcap: upCapture(rA, rB),
+    downcap: downCapture(rA, rB),
+    m2: m2(sharpe(cA, vA, STATE.rf), vB, STATE.rf)
+  };
+}
+
+function renderSummary(metrics) {
+  const tbl = document.getElementById("table-summary");
+  tbl.querySelector("thead").innerHTML = `<tr>
+    <th>Serie</th><th>Inicio</th><th>Fin</th><th>Obs</th><th>Periodo (años)</th><th>Rent. total</th><th>CAGR</th>
+  </tr>`;
+  const rows = metrics.map(m => `<tr class="${m.serie.isBenchmark ? 'bench-row' : ''}">
+    <td><span class="serie-dot" style="background:${m.serie.color}"></span>${escapeHtml(m.serie.label)}${m.serie.isBenchmark ? '<span class="badge">BENCH</span>' : ''}</td>
+    <td>${fmt.date(m.start)}</td>
+    <td>${fmt.date(m.end)}</td>
+    <td>${m.obs}</td>
+    <td>${m.years.toFixed(2)}</td>
+    <td class="${signClass(m.total)}">${fmt.pct(m.total)}</td>
+    <td class="${signClass(m.cagr)}">${fmt.pct(m.cagr)}</td>
+  </tr>`).join("");
+  tbl.querySelector("tbody").innerHTML = rows;
+}
+
+function renderWindows(metrics) {
+  const tbl = document.getElementById("table-windows");
+  const windows = ["YTD","1A","3A","5A","ITD"];
+  // Filtrar ventanas que al menos una serie soporta
+  const availableWindows = windows.filter(w => metrics.some(m => {
+    const sub = filterWindow(m.data, w);
+    return sub && sub.length >= 20;
+  }));
+  tbl.querySelector("thead").innerHTML = `<tr>
+    <th>Serie</th>${availableWindows.map(w => `<th>${w}</th>`).join("")}
+  </tr>`;
+  const rows = metrics.map(m => {
+    const cells = availableWindows.map(w => {
+      const sub = filterWindow(m.data, w);
+      if (!sub || sub.length < 20) return `<td>—</td>`;
+      const ret = totalReturn(sub);
+      return `<td class="${signClass(ret)}">${fmt.pct(ret)}</td>`;
+    }).join("");
+    return `<tr class="${m.serie.isBenchmark ? 'bench-row' : ''}">
+      <td><span class="serie-dot" style="background:${m.serie.color}"></span>${escapeHtml(m.serie.label)}${m.serie.isBenchmark ? '<span class="badge">BENCH</span>' : ''}</td>
+      ${cells}
+    </tr>`;
+  }).join("");
+  tbl.querySelector("tbody").innerHTML = rows;
+}
+
+function renderRiskTable(metrics) {
+  const tbl = document.getElementById("table-risk");
+  tbl.querySelector("thead").innerHTML = `<tr>
+    <th>Serie</th>
+    <th>Vol anual ${infoBtn("vol")}</th>
+    <th>Vol downside ${infoBtn("dvol")}</th>
+    <th>VaR 95% ${infoBtn("var95")}</th>
+    <th>CVaR 95% ${infoBtn("cvar95")}</th>
+    <th>Skew ${infoBtn("skew")}</th>
+    <th>Kurt ${infoBtn("kurt")}</th>
+    <th>Max DD ${infoBtn("maxdd")}</th>
+    <th>Pain ${infoBtn("painidx")}</th>
+    <th>Ulcer ${infoBtn("ulceridx")}</th>
+  </tr>`;
+  const rows = metrics.map(m => `<tr class="${m.serie.isBenchmark ? 'bench-row' : ''}">
+    <td><span class="serie-dot" style="background:${m.serie.color}"></span>${escapeHtml(m.serie.label)}${m.serie.isBenchmark ? '<span class="badge">BENCH</span>' : ''}</td>
+    <td>${fmt.pct(m.vol)}</td>
+    <td>${fmt.pct(m.dvol)}</td>
+    <td class="neg">${fmt.pct(m.var95)}</td>
+    <td class="neg">${fmt.pct(m.cvar95)}</td>
+    <td>${fmt.num(m.skew, 2)}</td>
+    <td>${fmt.num(m.kurt, 2)}</td>
+    <td class="neg">${fmt.pct(m.mdd)}</td>
+    <td>${fmt.pct(m.pain)}</td>
+    <td>${fmt.num(m.ulcer, 2)} pp</td>
+  </tr>`).join("");
+  tbl.querySelector("tbody").innerHTML = rows;
+}
+
+function renderRatiosTable(metrics) {
+  const tbl = document.getElementById("table-ratios");
+  tbl.querySelector("thead").innerHTML = `<tr>
+    <th>Serie</th>
+    <th>Sharpe ${infoBtn("sharpe")}</th>
+    <th>Sortino ${infoBtn("sortino")}</th>
+    <th>Calmar ${infoBtn("calmar")}</th>
+    <th>Omega ${infoBtn("omega")}</th>
+    <th>Martin ${infoBtn("martin")}</th>
+  </tr>`;
+  const rows = metrics.map(m => `<tr class="${m.serie.isBenchmark ? 'bench-row' : ''}">
+    <td><span class="serie-dot" style="background:${m.serie.color}"></span>${escapeHtml(m.serie.label)}${m.serie.isBenchmark ? '<span class="badge">BENCH</span>' : ''}</td>
+    <td>${fmt.num(m.sharpe, 2)}</td>
+    <td>${fmt.num(m.sortino, 2)}</td>
+    <td>${fmt.num(m.calmar, 2)}</td>
+    <td>${isFinite(m.omega) ? fmt.num(m.omega, 2) : "∞"}</td>
+    <td>${fmt.num(m.martin, 2)}</td>
+  </tr>`).join("");
+  tbl.querySelector("tbody").innerHTML = rows;
+}
+
+function renderBenchmarkTable(metrics) {
+  const bench = getBenchmark();
+  const section = document.getElementById("bench-section");
+  if (!bench) { section.style.display = "none"; return; }
+  section.style.display = "block";
+
+  const active = STATE.series.filter(s => s.data && !s.isBenchmark);
+  if (active.length === 0) { section.style.display = "none"; return; }
+
+  document.getElementById("bench-note").textContent = `Activo vs ${bench.label}. Cálculos sobre las fechas comunes con el benchmark.`;
+
+  const tbl = document.getElementById("table-bench");
+  tbl.querySelector("thead").innerHTML = `<tr>
+    <th>Serie</th>
+    <th>Beta ${infoBtn("beta")}</th>
+    <th>Alfa Jensen ${infoBtn("alpha")}</th>
+    <th>R² ${infoBtn("r2")}</th>
+    <th>Corr ${infoBtn("corr")}</th>
+    <th>TE ${infoBtn("te")}</th>
+    <th>IR ${infoBtn("ir")}</th>
+    <th>Up Capt ${infoBtn("upcap")}</th>
+    <th>Down Capt ${infoBtn("downcap")}</th>
+    <th>M² ${infoBtn("m2")}</th>
+  </tr>`;
+  const rows = active.map(s => {
+    const vs = computeBenchmarkMetrics(s, bench);
+    if (!vs) return "";
+    if (vs.partial && vs.msg) return `<tr><td><span class="serie-dot" style="background:${s.color}"></span>${escapeHtml(s.label)}</td><td colspan="9" class="neg">${vs.msg}</td></tr>`;
+    const partialBadge = vs.partial ? '<span class="badge warn">parcial</span>' : '';
+    return `<tr>
+      <td><span class="serie-dot" style="background:${s.color}"></span>${escapeHtml(s.label)}${partialBadge}</td>
+      <td>${fmt.num(vs.beta, 2)}</td>
+      <td class="${signClass(vs.alpha)}">${fmt.pct(vs.alpha)}</td>
+      <td>${fmt.num(vs.r2, 3)}</td>
+      <td>${fmt.num(vs.corr, 3)}</td>
+      <td>${fmt.pct(vs.te)}</td>
+      <td>${fmt.num(vs.ir, 2)}</td>
+      <td>${fmt.pct(vs.upcap)}</td>
+      <td>${fmt.pct(vs.downcap)}</td>
+      <td>${fmt.pct(vs.m2)}</td>
+    </tr>`;
+  }).join("");
+  tbl.querySelector("tbody").innerHTML = rows;
+}
+
+function renderExtremes(metrics) {
+  const tbl = document.getElementById("table-extremes");
+  tbl.querySelector("thead").innerHTML = `<tr>
+    <th>Serie</th>
+    <th>Mejor día</th><th>Fecha</th>
+    <th>Peor día</th><th>Fecha</th>
+    <th>Mejor mes</th><th>Mes</th>
+    <th>Peor mes</th><th>Mes</th>
+    <th>Mejor año</th><th>Peor año</th>
+  </tr>`;
+  const rows = metrics.map(m => {
+    const bwd = bestWorstDay(m.data);
+    const bwm = bestWorstMonth(m.data);
+    const bwy = bestWorstYear(m.data);
+    return `<tr class="${m.serie.isBenchmark ? 'bench-row' : ''}">
+      <td><span class="serie-dot" style="background:${m.serie.color}"></span>${escapeHtml(m.serie.label)}</td>
+      <td class="pos">${fmt.pct(bwd.best.ret)}</td><td>${fmt.date(bwd.best.date)}</td>
+      <td class="neg">${fmt.pct(bwd.worst.ret)}</td><td>${fmt.date(bwd.worst.date)}</td>
+      <td class="pos">${fmt.pct(bwm.best.ret)}</td><td>${fmt.monthLabel(bwm.best.key)}</td>
+      <td class="neg">${fmt.pct(bwm.worst.ret)}</td><td>${fmt.monthLabel(bwm.worst.key)}</td>
+      <td class="pos">${fmt.pct(bwy.best.ret)} <span style="color:var(--text-muted)">(${bwy.best.key})</span></td>
+      <td class="neg">${fmt.pct(bwy.worst.ret)} <span style="color:var(--text-muted)">(${bwy.worst.key})</span></td>
+    </tr>`;
+  }).join("");
+  tbl.querySelector("tbody").innerHTML = rows;
+}
+
+// ============================== TABS HELPER ==============================
+const TAB_REGISTRY = new Map(); // panelsContainerId -> items[]
+
+function buildTabs(containerTabsId, containerPanelsId, items) {
+  // items: [{id, label, color, contentHtml, onActivate?}]
+  TAB_REGISTRY.set(containerPanelsId, items);
+  const tabsEl = document.getElementById(containerTabsId);
+  const panelsEl = document.getElementById(containerPanelsId);
+  tabsEl.innerHTML = "";
+  panelsEl.innerHTML = "";
+  items.forEach((it, i) => {
+    const tab = document.createElement("button");
+    tab.className = "tab" + (i === 0 ? " active" : "");
+    tab.dataset.tabIdx = i;
+    tab.innerHTML = `<span class="serie-dot" style="background:${it.color}"></span>${escapeHtml(it.label)}`;
+    tabsEl.appendChild(tab);
+    const panel = document.createElement("div");
+    panel.className = "tab-panel" + (i === 0 ? " active" : "");
+    panel.dataset.panelIdx = i;
+    // Print-label: oculto en pantalla, visible al imprimir
+    panel.innerHTML = `<div class="panel-print-label"><span class="serie-dot" style="background:${it.color}"></span>${escapeHtml(it.label)}</div>${it.contentHtml}`;
+    panelsEl.appendChild(panel);
+  });
+  tabsEl.querySelectorAll(".tab").forEach(t => {
+    t.addEventListener("click", () => {
+      const idx = +t.dataset.tabIdx;
+      tabsEl.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+      panelsEl.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+      t.classList.add("active");
+      panelsEl.querySelector(`[data-panel-idx="${idx}"]`).classList.add("active");
+      if (items[idx].onActivate) items[idx].onActivate();
+    });
+  });
+  // Disparar onActivate del primero
+  if (items.length && items[0].onActivate) items[0].onActivate();
+}
+
+// Renderiza onActivate de TODOS los paneles de TODAS las tabs (no solo el activo)
+// Necesario antes de imprimir para que los gráficos diferidos estén pintados.
+function renderAllTabPanels() {
+  for (const [, items] of TAB_REGISTRY) {
+    items.forEach(it => { if (it.onActivate) it.onActivate(); });
+  }
+}
+
+// ============================== DRAWDOWNS TABS ==============================
+function renderDrawdownsTabs(metrics) {
+  const items = metrics.map(m => {
+    const eps = findDrawdownEpisodes(m.data).slice(0, 5);
+    let body;
+    if (!eps.length) {
+      body = `<div class="table-wrap"><table><tbody><tr><td>Sin drawdowns registrados</td></tr></tbody></table></div>`;
+    } else {
+      const rowsTr = eps.map((e, i) => `<tr>
+        <td>${i+1}</td>
+        <td class="neg">${fmt.pct(e.magnitude)}</td>
+        <td>${fmt.date(e.peakDate)}</td>
+        <td>${fmt.date(e.troughDate)}</td>
+        <td>${e.recoveryDate ? fmt.date(e.recoveryDate) : '<span class="badge warn">no recuperado</span>'}</td>
+        <td>${e.daysFall}</td>
+        <td>${e.daysRecover !== null ? e.daysRecover : "—"}</td>
+      </tr>`).join("");
+      body = `<div class="table-wrap"><table>
+        <thead><tr><th>#</th><th>Magnitud</th><th>Pico</th><th>Valle</th><th>Recuperación</th><th>Días caída</th><th>Días recuperación</th></tr></thead>
+        <tbody>${rowsTr}</tbody>
+      </table></div>`;
+    }
+    return { id: m.serie.id, label: m.serie.label, color: m.serie.color, contentHtml: body };
+  });
+  buildTabs("tabs-dd", "panels-dd", items);
+}
+
+// ============================== RÉGIMEN: RENDER ==============================
+function renderRegimeSection(metrics) {
+  const bench = getBenchmark();
+  const section = document.getElementById("regime-section");
+  if (!bench) { section.style.display = "none"; return; }
+  const active = STATE.series.filter(s => s.data && !s.isBenchmark);
+  if (active.length === 0) { section.style.display = "none"; return; }
+  section.style.display = "block";
+
+  const threshold = STATE.regimeThreshold;
+  const benchMetric = metrics.find(m => m.serie.id === bench.id);
+  const activeMetrics = metrics.filter(m => !m.serie.isBenchmark);
+
+  renderRegimeTimeline(benchMetric, threshold);
+  renderRegimeTableB(activeMetrics, benchMetric, threshold);
+  renderRegimeTableA(activeMetrics, benchMetric);
+}
+
+function renderRegimeTimeline(benchMetric, threshold) {
+  const episodes = findBearEpisodes(benchMetric.data, threshold);
+  const factor = 100 / benchMetric.data[0].vl;
+  const trace = {
+    x: benchMetric.data.map(d => d.date),
+    y: benchMetric.data.map(d => d.vl * factor),
+    type: 'scatter', mode: 'lines',
+    line: { color: benchMetric.serie.color, width: 2 },
+    name: benchMetric.serie.label,
+    hovertemplate: '%{x|%d.%m.%Y}<br>Base 100: %{y:.2f}<extra></extra>'
+  };
+  const shapes = episodes.map(e => ({
+    type: 'rect',
+    xref: 'x', yref: 'paper',
+    x0: e.start, x1: e.end,
+    y0: 0, y1: 1,
+    fillcolor: 'rgba(200, 66, 53, 0.18)',
+    line: { width: 0 },
+    layer: 'below'
+  }));
+
+  // Texto del subtítulo con número de episodios
+  const bullDays = benchMetric.data.length - episodes.reduce((s,e) => s + e.days, 0);
+  const bearDays = episodes.reduce((s,e) => s + e.days, 0);
+  const sub = document.getElementById("regime-timeline-sub");
+  if (sub) {
+    sub.textContent = `${episodes.length} episodios bear (drawdown ≥ ${fmt.pct(threshold,0)}) · ${bullDays} días bull · ${bearDays} días bear`;
+  }
+
+  Plotly.newPlot("chart-regime-timeline", [trace], {
+    ...PLOTLY_LAYOUT_BASE,
+    shapes,
+    yaxis: { ...PLOTLY_LAYOUT_BASE.yaxis, title: { text: `${benchMetric.serie.label} (base 100)`, standoff: 8 } },
+    showlegend: false
+  }, PLOTLY_CONFIG);
+}
+
+function renderRegimeTableB(activeMetrics, benchMetric, threshold) {
+  // Una fila inicial de "Benchmark (referencia)" y luego una por activo
+  const tbl = document.getElementById("table-regime-b");
+  tbl.querySelector("thead").innerHTML = `<tr>
+    <th>Serie</th>
+    <th>% tiempo Bull</th>
+    <th>% tiempo Bear</th>
+    <th>CAGR Bull</th>
+    <th>CAGR Bear</th>
+    <th>Vol Bull ${infoBtn("vol")}</th>
+    <th>Vol Bear ${infoBtn("vol")}</th>
+    <th>β Bull ${infoBtn("betaBull")}</th>
+    <th>β Bear ${infoBtn("betaBear")}</th>
+    <th>Hit Bull ${infoBtn("hitRateB")}</th>
+    <th>Hit Bear ${infoBtn("hitRateB")}</th>
+  </tr>`;
+
+  // Fila resumen del benchmark
+  const benchSelf = computeRegimeMetricsB(benchMetric.data, benchMetric.data, threshold);
+  const benchRow = benchSelf ? `<tr class="bench-row">
+    <td><span class="serie-dot" style="background:${benchMetric.serie.color}"></span>${escapeHtml(benchMetric.serie.label)}<span class="badge">BENCH</span></td>
+    <td>${fmt.pct(benchSelf.bullPctTime, 1)}</td>
+    <td>${fmt.pct(benchSelf.bearPctTime, 1)}</td>
+    <td class="${signClass(benchSelf.bullCAGR_B)}">${fmt.pct(benchSelf.bullCAGR_B)}</td>
+    <td class="${signClass(benchSelf.bearCAGR_B)}">${fmt.pct(benchSelf.bearCAGR_B)}</td>
+    <td>${fmt.pct(benchSelf.bullVol_A)}</td>
+    <td>${fmt.pct(benchSelf.bearVol_A)}</td>
+    <td>1,00</td>
+    <td>1,00</td>
+    <td>—</td>
+    <td>—</td>
+  </tr>` : "";
+
+  const rows = activeMetrics.map(m => {
+    const reg = computeRegimeMetricsB(m.data, benchMetric.data, threshold);
+    if (!reg) return `<tr><td><span class="serie-dot" style="background:${m.serie.color}"></span>${escapeHtml(m.serie.label)}</td><td colspan="10" class="neg">Sin fechas comunes suficientes</td></tr>`;
+    const warn = (reg.bullDays < 60 || reg.bearDays < 60) ? '<span class="badge warn" title="muestra pequeña">pocos días</span>' : '';
+    return `<tr>
+      <td><span class="serie-dot" style="background:${m.serie.color}"></span>${escapeHtml(m.serie.label)} ${warn}</td>
+      <td>${fmt.pct(reg.bullPctTime, 1)}</td>
+      <td>${fmt.pct(reg.bearPctTime, 1)}</td>
+      <td class="${signClass(reg.bullCAGR_A)}">${fmt.pct(reg.bullCAGR_A)}</td>
+      <td class="${signClass(reg.bearCAGR_A)}">${fmt.pct(reg.bearCAGR_A)}</td>
+      <td>${fmt.pct(reg.bullVol_A)}</td>
+      <td>${fmt.pct(reg.bearVol_A)}</td>
+      <td>${fmt.num(reg.bullBeta, 2)}</td>
+      <td>${fmt.num(reg.bearBeta, 2)}</td>
+      <td>${fmt.pct(reg.bullHitRate, 1)}</td>
+      <td>${fmt.pct(reg.bearHitRate, 1)}</td>
+    </tr>`;
+  }).join("");
+
+  tbl.querySelector("tbody").innerHTML = benchRow + rows;
+  document.getElementById("regime-b-note").textContent = `Bear definido como días en que ${benchMetric.serie.label} está en drawdown ≥ ${fmt.pct(threshold,0)}. Las β son condicionales (regresión solo con los días del régimen).`;
+}
+
+function renderRegimeTableA(activeMetrics, benchMetric) {
+  const tbl = document.getElementById("table-regime-a");
+  tbl.querySelector("thead").innerHTML = `<tr>
+    <th>Serie</th>
+    <th>Días Up bench</th>
+    <th>Días Down bench</th>
+    <th>Activo en días Up ${infoBtn("upCondAvg")}</th>
+    <th>Activo en días Down ${infoBtn("dnCondAvg")}</th>
+    <th>Benchmark Up (referencia)</th>
+    <th>Benchmark Down (referencia)</th>
+    <th>Hit Up ${infoBtn("hitRateB")}</th>
+    <th>Hit Down ${infoBtn("hitRateB")}</th>
+  </tr>`;
+
+  const rows = activeMetrics.map(m => {
+    const reg = computeRegimeMetricsA(m.data, benchMetric.data);
+    if (!reg) return `<tr><td><span class="serie-dot" style="background:${m.serie.color}"></span>${escapeHtml(m.serie.label)}</td><td colspan="8" class="neg">Sin fechas comunes suficientes</td></tr>`;
+    return `<tr>
+      <td><span class="serie-dot" style="background:${m.serie.color}"></span>${escapeHtml(m.serie.label)}</td>
+      <td>${reg.upDays}</td>
+      <td>${reg.dnDays}</td>
+      <td class="${signClass(reg.upAvg_A)}">${fmt.pct(reg.upAvg_A, 3)}</td>
+      <td class="${signClass(reg.dnAvg_A)}">${fmt.pct(reg.dnAvg_A, 3)}</td>
+      <td class="pos">${fmt.pct(reg.upAvg_B, 3)}</td>
+      <td class="neg">${fmt.pct(reg.dnAvg_B, 3)}</td>
+      <td>${fmt.pct(reg.upHitRate, 1)}</td>
+      <td>${fmt.pct(reg.dnHitRate, 1)}</td>
+    </tr>`;
+  }).join("");
+  tbl.querySelector("tbody").innerHTML = rows;
+}
+
+// ============================== CHARTS ==============================
+const PLOTLY_CONFIG = { responsive: true, displaylogo: false, modeBarButtonsToRemove: ['lasso2d','select2d'] };
+const PLOTLY_LAYOUT_BASE = {
+  font: { family: "'IBM Plex Sans', sans-serif", size: 11, color: "#1A2433" },
+  margin: { l: 50, r: 20, t: 10, b: 40 },
+  paper_bgcolor: 'rgba(0,0,0,0)',
+  plot_bgcolor: 'rgba(0,0,0,0)',
+  xaxis: { gridcolor: "#F0F2F5", linecolor: "#E5E9EE" },
+  yaxis: { gridcolor: "#F0F2F5", linecolor: "#E5E9EE" },
+  hoverlabel: { font: { family: "'IBM Plex Mono', monospace", size: 11 }, bgcolor: "#0E2340", bordercolor: "#1F8A8F" },
+  legend: { orientation: "h", yanchor: "bottom", y: 1.02, xanchor: "right", x: 1 }
+};
+
+function renderBase100Chart(metrics) {
+  const traces = metrics.map(m => {
+    const factor = 100 / m.data[0].vl;
+    return {
+      x: m.data.map(d => d.date),
+      y: m.data.map(d => d.vl * factor),
+      name: m.serie.label + (m.serie.isBenchmark ? " (BENCH)" : ""),
+      type: 'scatter', mode: 'lines',
+      line: { color: m.serie.color, width: 2, dash: m.serie.isBenchmark ? 'dash' : 'solid' }
+    };
+  });
+  Plotly.newPlot("chart-base100", traces, {
+    ...PLOTLY_LAYOUT_BASE,
+    yaxis: {...PLOTLY_LAYOUT_BASE.yaxis, title: { text: "Base 100", standoff: 8 }}
+  }, PLOTLY_CONFIG);
+}
+
+function renderUnderwaterChart(metrics) {
+  const single = metrics.length === 1;
+  const singleCard = document.getElementById("underwater-single-card");
+  const tabsEl = document.getElementById("tabs-underwater");
+  const panelsEl = document.getElementById("panels-underwater");
+
+  if (single) {
+    // Modo 1 serie: chart único en rojo
+    singleCard.style.display = "block";
+    tabsEl.style.display = "none";
+    panelsEl.style.display = "none";
+    drawUnderwaterRed("chart-underwater", metrics[0]);
+    return;
+  }
+
+  // Modo multi: tabs por serie, cada underwater en rojo
+  singleCard.style.display = "none";
+  tabsEl.style.display = "flex";
+  panelsEl.style.display = "block";
+
+  const items = metrics.map(m => {
+    const divId = `chart-underwater-${m.serie.id}`;
+    const body = `<div class="chart-card"><div class="plotly-chart" id="${divId}"></div></div>`;
+    return {
+      id: m.serie.id,
+      label: m.serie.label + (m.serie.isBenchmark ? " (BENCH)" : ""),
+      color: m.serie.color,
+      contentHtml: body,
+      onActivate: () => drawUnderwaterRed(divId, m)
+    };
+  });
+  buildTabs("tabs-underwater", "panels-underwater", items);
+}
+
+function drawUnderwaterRed(divId, m) {
+  const dd = drawdownSeries(m.prices);
+  const trace = {
+    x: m.data.map(d => d.date),
+    y: dd.map(v => v * 100),
+    type: 'scatter', mode: 'lines',
+    line: { color: '#C84235', width: 1 },
+    fill: 'tozeroy',
+    fillcolor: 'rgba(200, 66, 53, 0.2)',
+    name: 'Drawdown'
+  };
+  Plotly.newPlot(divId, [trace], {
+    ...PLOTLY_LAYOUT_BASE,
+    yaxis: { ...PLOTLY_LAYOUT_BASE.yaxis, title: { text: "Drawdown (%)", standoff: 8 }, ticksuffix: "%" },
+    showlegend: false
+  }, PLOTLY_CONFIG);
+}
+
+function hexToRGBA(hex, alpha) {
+  const m = hex.replace("#","").match(/.{2}/g);
+  return `rgba(${parseInt(m[0],16)},${parseInt(m[1],16)},${parseInt(m[2],16)},${alpha})`;
+}
+
+function renderHistogramTabs(metrics) {
+  const items = metrics.map(m => {
+    const divId = `chart-hist-${m.serie.id}`;
+    const body = `<div class="chart-card"><div class="plotly-chart" id="${divId}"></div></div>`;
+    return {
+      id: m.serie.id, label: m.serie.label, color: m.serie.color, contentHtml: body,
+      onActivate: () => drawHistogram(divId, m)
+    };
+  });
+  buildTabs("tabs-hist", "panels-hist", items);
+}
+
+function drawHistogram(divId, m) {
+  const r = m.returns.map(x => x*100);
+  const trace = {
+    x: r, type: 'histogram', nbinsx: 60,
+    marker: { color: m.serie.color, line: { color: '#0E2340', width: 0.3 } },
+    opacity: 0.85, name: 'Frecuencia'
+  };
+  const mean = Stats.mean(r), std = Stats.std(r);
+  const min = Math.min(...r), max = Math.max(...r);
+  const xs = [], ys = [];
+  const step = (max-min)/100;
+  for (let x=min; x<=max; x+=step) {
+    xs.push(x);
+    ys.push((1/(std*Math.sqrt(2*Math.PI))) * Math.exp(-0.5*((x-mean)/std)**2));
+  }
+  const binW = (max-min)/60;
+  const scaled = ys.map(y => y*binW*r.length);
+  const traceNorm = { x: xs, y: scaled, type:'scatter', mode:'lines', line: {color:'#0E2340', width:2, dash:'dot'}, name:'Normal teórica' };
+  Plotly.newPlot(divId, [trace, traceNorm], {
+    ...PLOTLY_LAYOUT_BASE,
+    xaxis: { ...PLOTLY_LAYOUT_BASE.xaxis, type:'linear', title:{text:"Retorno diario (%)", standoff:8}, ticksuffix:"%", zeroline:true, zerolinecolor:"#E5E9EE" },
+    yaxis: { ...PLOTLY_LAYOUT_BASE.yaxis, title:{text:"Frecuencia", standoff:8} }
+  }, PLOTLY_CONFIG);
+}
+
+function renderScatterTabs(metrics) {
+  const bench = getBenchmark();
+  const section = document.getElementById("scatter-section");
+  if (!bench) { section.style.display = "none"; return; }
+  const benchMetric = metrics.find(m => m.serie.id === bench.id);
+  const activeMetrics = metrics.filter(m => !m.serie.isBenchmark);
+  if (activeMetrics.length === 0) { section.style.display = "none"; return; }
+  section.style.display = "block";
+
+  const items = activeMetrics.map(m => {
+    const divId = `chart-scatter-${m.serie.id}`;
+    const body = `<div class="chart-card"><div class="plotly-chart" id="${divId}"></div></div>`;
+    return {
+      id: m.serie.id, label: m.serie.label, color: m.serie.color, contentHtml: body,
+      onActivate: () => drawScatter(divId, m, benchMetric)
+    };
+  });
+  buildTabs("tabs-scatter", "panels-scatter", items);
+}
+
+function drawScatter(divId, m, benchMetric) {
+  const { a, b } = alignSeries(m.data, benchMetric.data);
+  const rA = returnsFromPrices(a.map(d => d.vl)).map(x => x*100);
+  const rB = returnsFromPrices(b.map(d => d.vl)).map(x => x*100);
+  const beta = betaCalc(rA, rB);
+  const mA = Stats.mean(rA), mB = Stats.mean(rB);
+  const intercept = mA - beta*mB;
+  const xs = [Math.min(...rB), Math.max(...rB)];
+  const ys = xs.map(x => beta*x + intercept);
+  const traceScatter = {
+    x: rB, y: rA, type:'scatter', mode:'markers',
+    marker: { color: hexToRGBA(m.serie.color, 0.5), size: 4 },
+    name: 'Días'
+  };
+  const traceReg = {
+    x: xs, y: ys, type:'scatter', mode:'lines',
+    line: { color: m.serie.color, width: 2 },
+    name: `Regresión (β=${fmt.num(beta,2)})`
+  };
+  Plotly.newPlot(divId, [traceScatter, traceReg], {
+    ...PLOTLY_LAYOUT_BASE,
+    xaxis: { ...PLOTLY_LAYOUT_BASE.xaxis, type:'linear', title:{text:`Retorno ${benchMetric.serie.label} (%)`, standoff:8}, ticksuffix:"%", zeroline:true, zerolinecolor:"#E5E9EE" },
+    yaxis: { ...PLOTLY_LAYOUT_BASE.yaxis, type:'linear', title:{text:`Retorno ${m.serie.label} (%)`, standoff:8}, ticksuffix:"%", zeroline:true, zerolinecolor:"#E5E9EE" }
+  }, PLOTLY_CONFIG);
+}
+
+function renderRollingCharts(metrics) {
+  const windowMap = { "1Y": TRADING_DAYS, "3Y": TRADING_DAYS*3, "5Y": TRADING_DAYS*5 };
+  const windowLabel = { "1Y": "1 año", "3Y": "3 años", "5Y": "5 años" };
+  // Colores por ventana (modo 1 serie)
+  const winColors = { "1Y": "#0E2340", "3Y": "#1F8A8F", "5Y": "#C4842A" };
+
+  // ¿Cuántas series están realmente cargadas?
+  const isSingle = metrics.length === 1;
+
+  // Caso edge: la única serie es benchmark → no hay nada que mostrar en rolling
+  if (isSingle && metrics[0].serie.isBenchmark) {
+    document.getElementById("rolling-section").style.display = "none";
+    return;
+  }
+
+  // Mostrar / ocultar la barra del selector
+  const winBar = document.getElementById("rolling-window-bar");
+  if (isSingle) winBar.classList.add("hidden");
+  else winBar.classList.remove("hidden");
+
+  // Texto de la nota
+  document.getElementById("rolling-note").textContent = isSingle
+    ? "Tres ventanas móviles (1A, 3A, 5A) superpuestas. Si no hay datos suficientes para alguna, se omite."
+    : "Solo se muestran los activos analizados (el benchmark se usa como referencia para la beta rolling, pero no se dibuja como línea propia).";
+
+  // ========== MODO MULTI-SERIE ==========
+  if (!isSingle) {
+    const windowDays = windowMap[STATE.rollingWindow];
+    const wLabel = windowLabel[STATE.rollingWindow];
+    // Excluir benchmark de los gráficos rolling (CAGR/Vol/Sharpe son solo de los fondos analizados)
+    const eligible = metrics.filter(m => !m.serie.isBenchmark && m.data.length > windowDays + 10);
+    if (eligible.length === 0) {
+      document.getElementById("rolling-section").style.display = "none";
+      return;
+    }
+    document.getElementById("rolling-section").style.display = "block";
+    document.getElementById("sub-rolling-return").textContent = `CAGR · ventana ${wLabel}`;
+    document.getElementById("sub-rolling-vol").textContent = `σ anualizada · ventana ${wLabel}`;
+    document.getElementById("sub-rolling-sharpe").textContent = `Sharpe · ventana ${wLabel}`;
+    document.getElementById("sub-rolling-beta").textContent = `Beta vs benchmark · ventana ${wLabel}`;
+
+    const tracesRet = eligible.map(m => {
+      const s = rollingCAGR(m.data, windowDays);
+      return { x: s.map(p => p.date), y: s.map(p => p.value*100), name: m.serie.label, type:'scatter', mode:'lines', line:{color: m.serie.color, width:1.8, dash: m.serie.isBenchmark ? 'dash' : 'solid'} };
+    });
+    Plotly.newPlot("chart-rolling-return", tracesRet, {...PLOTLY_LAYOUT_BASE, yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:{text:"CAGR (%)", standoff:8}, ticksuffix:"%"}}, PLOTLY_CONFIG);
+
+    const tracesVol = eligible.map(m => {
+      const s = rollingVol(m.data, windowDays);
+      return { x: s.map(p => p.date), y: s.map(p => p.value*100), name: m.serie.label, type:'scatter', mode:'lines', line:{color: m.serie.color, width:1.8, dash: m.serie.isBenchmark ? 'dash' : 'solid'} };
+    });
+    Plotly.newPlot("chart-rolling-vol", tracesVol, {...PLOTLY_LAYOUT_BASE, yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:{text:"Vol anual (%)", standoff:8}, ticksuffix:"%"}}, PLOTLY_CONFIG);
+
+    const tracesSh = eligible.map(m => {
+      const s = rollingSharpe(m.data, windowDays, STATE.rf);
+      return { x: s.map(p => p.date), y: s.map(p => p.value), name: m.serie.label, type:'scatter', mode:'lines', line:{color: m.serie.color, width:1.8, dash: m.serie.isBenchmark ? 'dash' : 'solid'} };
+    });
+    Plotly.newPlot("chart-rolling-sharpe", tracesSh, {...PLOTLY_LAYOUT_BASE, yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:{text:"Sharpe", standoff:8}, zeroline:true, zerolinecolor:"#E5E9EE"}}, PLOTLY_CONFIG);
+
+    const bench = getBenchmark();
+    if (bench) {
+      document.getElementById("card-rolling-beta").style.display = "block";
+      const tracesBeta = eligible.map(m => {
+        const s = rollingBetaSeries(m.data, bench.data, windowDays);
+        return { x: s.map(p => p.date), y: s.map(p => p.value), name: m.serie.label, type:'scatter', mode:'lines', line:{color: m.serie.color, width:1.8} };
+      });
+      Plotly.newPlot("chart-rolling-beta", tracesBeta, {...PLOTLY_LAYOUT_BASE, yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:{text:"Beta", standoff:8}, zeroline:true, zerolinecolor:"#E5E9EE"}}, PLOTLY_CONFIG);
+    } else {
+      document.getElementById("card-rolling-beta").style.display = "none";
+    }
+    return;
+  }
+
+  // ========== MODO 1 SERIE: las 3 ventanas superpuestas ==========
+  const m = metrics[0];
+  const windowsUsable = Object.keys(windowMap).filter(w => m.data.length > windowMap[w] + 10);
+
+  if (windowsUsable.length === 0) {
+    document.getElementById("rolling-section").style.display = "none";
+    return;
+  }
+  document.getElementById("rolling-section").style.display = "block";
+  document.getElementById("sub-rolling-return").textContent = `Una línea por ventana móvil (1A, 3A, 5A según haya datos)`;
+  document.getElementById("sub-rolling-vol").textContent = `Una línea por ventana móvil`;
+  document.getElementById("sub-rolling-sharpe").textContent = `Una línea por ventana móvil`;
+  document.getElementById("sub-rolling-beta").textContent = `Una línea por ventana móvil`;
+
+  // Rolling CAGR
+  const tracesRet = windowsUsable.map(w => {
+    const s = rollingCAGR(m.data, windowMap[w]);
+    return { x: s.map(p => p.date), y: s.map(p => p.value*100), name: windowLabel[w], type:'scatter', mode:'lines', line:{color: winColors[w], width:1.8} };
+  });
+  Plotly.newPlot("chart-rolling-return", tracesRet, {...PLOTLY_LAYOUT_BASE, yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:{text:"CAGR (%)", standoff:8}, ticksuffix:"%"}}, PLOTLY_CONFIG);
+
+  // Rolling vol
+  const tracesVol = windowsUsable.map(w => {
+    const s = rollingVol(m.data, windowMap[w]);
+    return { x: s.map(p => p.date), y: s.map(p => p.value*100), name: windowLabel[w], type:'scatter', mode:'lines', line:{color: winColors[w], width:1.8} };
+  });
+  Plotly.newPlot("chart-rolling-vol", tracesVol, {...PLOTLY_LAYOUT_BASE, yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:{text:"Vol anual (%)", standoff:8}, ticksuffix:"%"}}, PLOTLY_CONFIG);
+
+  // Rolling sharpe
+  const tracesSh = windowsUsable.map(w => {
+    const s = rollingSharpe(m.data, windowMap[w], STATE.rf);
+    return { x: s.map(p => p.date), y: s.map(p => p.value), name: windowLabel[w], type:'scatter', mode:'lines', line:{color: winColors[w], width:1.8} };
+  });
+  Plotly.newPlot("chart-rolling-sharpe", tracesSh, {...PLOTLY_LAYOUT_BASE, yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:{text:"Sharpe", standoff:8}, zeroline:true, zerolinecolor:"#E5E9EE"}}, PLOTLY_CONFIG);
+
+  // Rolling beta solo si la única serie tiene benchmark... pero si solo hay 1 serie, no hay benchmark contra el que comparar
+  // (el benchmark sería la propia serie, no tiene sentido). Ocultamos.
+  document.getElementById("card-rolling-beta").style.display = "none";
+}
+
+function renderHeatmapTabs(metrics) {
+  const items = metrics.map(m => {
+    const divId = `chart-heat-${m.serie.id}`;
+    const body = `<div class="chart-card"><div class="plotly-chart tall" id="${divId}"></div></div>`;
+    return {
+      id: m.serie.id, label: m.serie.label, color: m.serie.color, contentHtml: body,
+      onActivate: () => drawHeatmap(divId, m)
+    };
+  });
+  buildTabs("tabs-heat", "panels-heat", items);
+}
+
+function drawHeatmap(divId, m) {
+  const monthly = monthlyReturns(m.data);
+  const keys = [...monthly.keys()].sort();
+  if (!keys.length) return;
+  const years = [...new Set(keys.map(k => +k.split("-")[0]))].sort();
+  const months = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+  const z = [], txt = [];
+  for (const y of years) {
+    const row = [], rowT = [];
+    for (let mo=1; mo<=12; mo++) {
+      const k = `${y}-${String(mo).padStart(2,'0')}`;
+      const v = monthly.get(k);
+      if (v === undefined) { row.push(null); rowT.push(""); }
+      else { row.push(v*100); rowT.push(fmt.pct(v, 2)); }
+    }
+    z.push(row); txt.push(rowT);
+  }
+  const yearly = yearlyReturns(m.data);
+  const headerMonths = [...months, "Año"];
+  for (let i=0; i<years.length; i++) {
+    const yv = yearly.get(years[i]);
+    z[i].push(yv !== undefined ? yv*100 : null);
+    txt[i].push(yv !== undefined ? fmt.pct(yv, 2) : "");
+  }
+  const heat = {
+    z, x: headerMonths, y: years.map(String),
+    type: 'heatmap',
+    colorscale: [[0,'#C84235'],[0.5,'#FAFAF7'],[1,'#1F8F5F']],
+    zmid: 0, text: txt, texttemplate: "%{text}",
+    textfont: { family: "'IBM Plex Mono', monospace", size: 10 },
+    hovertemplate: "%{y} %{x}: %{text}<extra></extra>",
+    colorbar: { ticksuffix: "%", thickness: 12, len: 0.7 }
+  };
+  Plotly.newPlot(divId, [heat], {
+    ...PLOTLY_LAYOUT_BASE,
+    margin: { l:60, r:80, t:10, b:40 },
+    xaxis: { side:"top", linecolor:"transparent" },
+    yaxis: { autorange:"reversed", linecolor:"transparent" }
+  }, PLOTLY_CONFIG);
+}
+
+// ============================== MAIN COMPUTE ==============================
+function compute() {
+  try {
+    document.getElementById("error-msg").classList.remove("visible");
+    const rf = parseRf(document.getElementById("rf-input").value);
+    if (rf === null) throw new Error("Tasa libre de riesgo inválida. Usa formato 2,50% o 0,025.");
+    STATE.rf = rf;
+
+    const loaded = STATE.series.filter(s => s.data);
+    if (loaded.length === 0) throw new Error("Sube al menos una serie con CSV.");
+
+    const metrics = loaded.map(s => computeSerieMetrics(s));
+
+    renderSummary(metrics);
+    renderWindows(metrics);
+    renderRiskTable(metrics);
+    renderRatiosTable(metrics);
+    renderBenchmarkTable(metrics);
+    renderRegimeSection(metrics);
+    renderExtremes(metrics);
+    renderDrawdownsTabs(metrics);
+    renderBase100Chart(metrics);
+    renderUnderwaterChart(metrics);
+    renderHistogramTabs(metrics);
+    renderScatterTabs(metrics);
+    renderRollingCharts(metrics);
+    renderHeatmapTabs(metrics);
+
+    document.getElementById("results").classList.add("visible");
+    document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (e) {
+    showError(e.message);
+  }
+}
+
+// ============================== TOOLTIPS ==============================
+function setupTooltips() {
+  document.body.addEventListener("click", e => {
+    const btn = e.target.closest("[data-info]");
+    if (!btn) return;
+    e.stopPropagation();
+    const d = DEF[btn.dataset.info];
+    if (!d) return;
+    document.getElementById("tooltip-title").textContent = d.title;
+    document.getElementById("tooltip-def").textContent = d.def;
+    document.getElementById("tooltip-formula").textContent = d.formula;
+    document.getElementById("tooltip-interp").textContent = d.interp;
+    document.getElementById("tooltip-overlay").classList.add("visible");
+  });
+  document.getElementById("tooltip-close").addEventListener("click", () => document.getElementById("tooltip-overlay").classList.remove("visible"));
+  document.getElementById("tooltip-overlay").addEventListener("click", e => {
+    if (e.target.id === "tooltip-overlay") e.currentTarget.classList.remove("visible");
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") document.getElementById("tooltip-overlay").classList.remove("visible"); });
+}
+
+// ============================== ROLLING WINDOW SELECTOR ==============================
+function setupRollingSelector() {
+  const sel = document.getElementById("rolling-window-selector");
+  sel.querySelectorAll(".rolling-win-btn").forEach(b => {
+    b.addEventListener("click", () => {
+      const w = b.dataset.window;
+      STATE.rollingWindow = w;
+      sel.querySelectorAll(".rolling-win-btn").forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+      // Recalcular rolling solo
+      const loaded = STATE.series.filter(s => s.data);
+      if (loaded.length > 0) {
+        const metrics = loaded.map(s => computeSerieMetrics(s));
+        renderRollingCharts(metrics);
+      }
+    });
+  });
+}
+
+// ============================== REGIME THRESHOLD SELECTOR ==============================
+function setupRegimeSelector() {
+  const sel = document.getElementById("regime-threshold-selector");
+  if (!sel) return;
+  sel.querySelectorAll(".rolling-win-btn").forEach(b => {
+    b.addEventListener("click", () => {
+      const th = parseFloat(b.dataset.th);
+      STATE.regimeThreshold = th;
+      sel.querySelectorAll(".rolling-win-btn").forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+      // Recalcular solo la sección de regímenes
+      const loaded = STATE.series.filter(s => s.data);
+      if (loaded.length > 0) {
+        const metrics = loaded.map(s => computeSerieMetrics(s));
+        renderRegimeSection(metrics);
+      }
+    });
+  });
+}
+
+// ============================== EXPORT TO PDF ==============================
+function updatePrintHeader() {
+  const loaded = STATE.series.filter(s => s.data);
+  if (loaded.length === 0) return;
+  const today = new Date();
+  const dd = String(today.getDate()).padStart(2,'0');
+  const mm = String(today.getMonth()+1).padStart(2,'0');
+  const yy = today.getFullYear();
+  const dateStr = `${dd}.${mm}.${yy}`;
+
+  // Lista de series con su rol
+  const seriesText = loaded.map(s => {
+    const role = s.isBenchmark ? ' (benchmark)' : '';
+    return `${escapeHtml(s.label)}${role}`;
+  }).join(' · ');
+
+  // Rango temporal global (mínimo y máximo entre todas las series)
+  let minDate = loaded[0].data[0].date;
+  let maxDate = loaded[0].data[loaded[0].data.length-1].date;
+  loaded.forEach(s => {
+    if (s.data[0].date < minDate) minDate = s.data[0].date;
+    if (s.data[s.data.length-1].date > maxDate) maxDate = s.data[s.data.length-1].date;
+  });
+
+  document.getElementById("print-header").innerHTML = `
+    <div class="ph-row">
+      <span class="ph-title">Análisis de activos</span>
+      <span class="ph-date">${dateStr}</span>
+    </div>
+    <div class="ph-series"><strong>Series:</strong> ${seriesText}  ·  <strong>Periodo:</strong> ${fmt.date(minDate)} → ${fmt.date(maxDate)}  ·  <strong>Rf:</strong> ${fmt.pct(STATE.rf)}</div>
+  `;
+}
+
+function exportToPDF() {
+  // 1. Actualizar cabecera de impresión
+  updatePrintHeader();
+  // 2. Renderizar todos los paneles ocultos (histograma, scatter, heatmap, drawdowns)
+  renderAllTabPanels();
+  // 3. Esperar a que Plotly termine de renderizar antes de imprimir
+  setTimeout(() => {
+    // Forzar resize de todos los gráficos Plotly para que se adapten al layout de impresión
+    document.querySelectorAll('.plotly-chart').forEach(d => {
+      try { if (d._fullLayout) Plotly.Plots.resize(d); } catch(e) {}
+    });
+    setTimeout(() => window.print(), 250);
+  }, 350);
+}
+
+// ============================== INIT ==============================
+setupTooltips();
+setupRollingSelector();
+setupRegimeSelector();
+addEmptySerie();
+addEmptySerie();
+
+document.getElementById("btn-add-serie").addEventListener("click", addEmptySerie);
+document.getElementById("btn-compute").addEventListener("click", compute);
+document.getElementById("btn-export-pdf").addEventListener("click", exportToPDF);
+document.getElementById("btn-reset").addEventListener("click", () => {
+  STATE.series = [];
+  STATE.nextId = 1;
+  document.getElementById("results").classList.remove("visible");
+  document.getElementById("error-msg").classList.remove("visible");
+  document.getElementById("btn-compute").disabled = true;
+  addEmptySerie();
+  addEmptySerie();
+});
+</script>
+
+</body>
+</html>
