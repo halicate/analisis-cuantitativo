@@ -825,6 +825,258 @@
     /* Resultados sin display:none */
     .results { display: block !important; }
   }
+  /* ---------- PORTFOLIO BLOCK ---------- */
+  .pf-subtitle {
+    font-family: 'Fraunces', serif; font-size: 18px; color: var(--navy);
+    margin: 32px 0 8px; font-weight: 600; display: flex; align-items: center; gap: 6px;
+  }
+  .pf-warn {
+    background: #FBF7EE; border: 1px solid #E8D8B0; border-left: 3px solid var(--warning);
+    color: #6B5320; padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 20px; line-height: 1.5;
+  }
+  .pf-warn.severe { background: #FBEEEC; border-color: #E8C0B8; border-left-color: var(--negative); color: #7A2C22; }
+  .pf-empty { padding: 40px; text-align: center; color: var(--text-muted); font-size: 13px; }
+  .pf-builder { display: grid; grid-template-columns: minmax(260px, 1fr) 1.4fr; gap: 24px; align-items: start; }
+  @media (max-width: 760px) { .pf-builder { grid-template-columns: 1fr; } }
+  .pf-weights {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .pf-weight-row { display: flex; align-items: center; gap: 10px; }
+  .pf-weight-label { flex: 1; font-size: 13px; color: var(--text); font-weight: 500; }
+  .pf-weight-input {
+    width: 70px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 14px; text-align: right; color: var(--navy);
+  }
+  .pf-weight-input:focus { outline: none; border-color: var(--teal); }
+  .pf-weight-pct { color: var(--text-muted); font-size: 13px; }
+  .pf-controls { display: flex; flex-direction: column; gap: 14px; }
+  .pf-btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pf-mini-btn {
+    padding: 7px 12px; border: 1px solid var(--border); background: var(--card); color: var(--text-soft);
+    font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 500; border-radius: 6px; cursor: pointer; transition: all 0.15s;
+  }
+  .pf-mini-btn:hover { border-color: var(--teal); color: var(--navy); }
+  .pf-calc-btn {
+    padding: 7px 16px; border: none; background: var(--teal); color: white;
+    font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: all 0.15s;
+  }
+  .pf-calc-btn:hover { background: var(--navy); }
+  .pf-weight-sum { font-size: 13px; font-weight: 500; }
+  .pf-weight-sum.pos { color: var(--positive); }
+  .pf-weight-sum.warn { color: var(--warning); }
+  .pf-weight-sum.neg { color: var(--negative); }
+  tr.pf-row td { background: #F4F6F8; font-weight: 600; }
+  .pf-div-card {
+    margin-top: 20px; background: linear-gradient(180deg, #FFFFFF, #F8FAFB);
+    border: 1px solid var(--border); border-left: 3px solid var(--teal); border-radius: 10px; padding: 22px 24px;
+  }
+  .pf-div-grid { display: flex; flex-wrap: wrap; gap: 36px; margin-bottom: 14px; }
+  .pf-div-metric { display: flex; flex-direction: column; gap: 2px; }
+  .pf-div-val { font-family: 'IBM Plex Mono', monospace; font-size: 26px; font-weight: 600; color: var(--navy); }
+  .pf-div-lbl { font-size: 12px; color: var(--text-soft); display: flex; align-items: center; gap: 4px; }
+  .pf-div-text { font-size: 14px; color: var(--text); line-height: 1.6; margin: 0; }
+  .pf-frontier-weights { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .pf-fw-row {
+    font-size: 13px; color: var(--text); background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 14px; font-family: 'IBM Plex Mono', monospace;
+  }
+  .pf-fw-tag { font-weight: 700; font-family: 'IBM Plex Sans', sans-serif; margin-right: 8px; }
+  .pf-fw-stat { color: var(--text-muted); }
+  .pf-metrics-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 8px 24px 20px; display: flex; flex-direction: column;
+  }
+  .pf-mgroup { padding: 16px 0; border-bottom: 1px solid var(--border-soft); }
+  .pf-mgroup:last-child { border-bottom: none; }
+  .pf-mgroup-title {
+    font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--teal); margin-bottom: 14px;
+  }
+  .pf-mgroup-msg { font-size: 13px; }
+  .pf-stat-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 18px 14px;
+  }
+  .pf-stat { display: flex; flex-direction: column; gap: 3px; }
+  .pf-stat-val { font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600; color: var(--navy); }
+  .pf-stat-val.pos { color: var(--positive); }
+  .pf-stat-val.neg { color: var(--negative); }
+  .pf-stat-lbl { font-size: 11.5px; color: var(--text-soft); display: flex; align-items: center; gap: 3px; }
+  .pf-regime-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 900px) { .pf-regime-grid { grid-template-columns: 1fr; } }
+  .pf-regime-title {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;
+    padding: 6px 0 2px; text-align: center;
+  }
+  .pf-regime-title.bull { color: var(--positive); }
+  .pf-regime-title.bear { color: var(--negative); }
+  td.muted, .pf-stat-val.muted { color: var(--text-muted); }
+
+  /* ===================================================================== */
+  /* REFRESH SUTIL · 5 ajustes apilados como overrides (junio 2026)         */
+  /* Objetivo: look "panel cuant" sin romper identidad ni impresión PDF.    */
+  /* ===================================================================== */
+
+  /* 1 · CIFRAS CON TRATAMIENTO "TERMINAL" ================================ */
+  /* Tablas: alineación derecha estricta, mono más marcado, ligeramente apretado */
+  table th, table td { font-variant-numeric: tabular-nums; }
+  table td:not(:first-child),
+  table th:not(:first-child) {
+    text-align: right;
+    font-feature-settings: "tnum" 1;
+  }
+  /* Las celdas numéricas reciben Plex Mono explícito (no solo las que ya lo tenían) */
+  td.pos, td.neg, td.muted,
+  table td:not(:first-child) {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    letter-spacing: -0.1px;
+  }
+  /* Cifras grandes en fichas: refuerzo del mono y un tracking negativo */
+  .pf-stat-val, .pf-div-val {
+    font-feature-settings: "tnum" 1;
+    letter-spacing: -0.4px;
+  }
+  /* Hover sutil en filas de tabla, sin chillar */
+  table tbody tr:hover td { background: rgba(31, 138, 143, 0.04); }
+
+  /* 2 · JERARQUÍA TIPOGRÁFICA MÁS CLARA ================================== */
+  /* h2 ahora pesa más y tiene "eyebrow" implícito mediante margen + borde */
+  .section-title {
+    font-size: 22px !important;
+    font-weight: 600;
+    margin-top: 48px !important;
+    margin-bottom: 14px !important;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    position: relative;
+  }
+  .section-title::before {
+    content: "";
+    position: absolute;
+    top: -1px; left: 0;
+    width: 36px; height: 2px;
+    background: var(--teal);
+  }
+  /* h3 (subtítulos del bloque cartera) más pequeños y con barrita teal a la izquierda */
+  .pf-subtitle {
+    font-size: 15px !important;
+    padding-left: 10px;
+    border-left: 2px solid var(--teal);
+    margin: 28px 0 10px !important;
+  }
+  /* Subrayados de notas más sutiles, color soft */
+  .section-note { color: var(--text-soft); font-size: 12.5px; line-height: 1.55; }
+
+  /* 3 · DENSIDAD DE TARJETAS ============================================ */
+  /* Tarjetas con borde un poco más definido y padding ajustado */
+  .chart-card, .pf-div-card, .pf-metrics-card, .pf-weights {
+    border: 1px solid var(--border) !important;
+    box-shadow: none !important;
+    padding: 16px 18px !important;
+  }
+  .chart-card-title { font-size: 13px; font-weight: 600; color: var(--navy); }
+  .chart-card-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+  /* Las fichas-grupo de la cartera mantienen su aire pero un punto más densas */
+  .pf-mgroup { padding: 14px 0; }
+  .pf-stat-grid { gap: 14px 12px; }
+  .pf-stat-val { font-size: 19px; }
+
+  /* 4 · TABLAS MÁS DENSAS ============================================== */
+  table th, table td {
+    padding: 7px 10px !important;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  table th {
+    font-size: 11px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-soft);
+    font-weight: 600;
+    background: rgba(245, 247, 250, 0.5);
+    border-bottom: 1px solid var(--border) !important;
+  }
+  table td { font-size: 12.5px; }
+  /* Zebra striping muy sutil */
+  table tbody tr:nth-child(even) td { background: rgba(245, 247, 250, 0.35); }
+  table tbody tr:nth-child(even) td:hover,
+  table tbody tr:hover td { background: rgba(31, 138, 143, 0.05); }
+  /* Mantén legibles las filas marcadas (cartera, benchmark) sobre el zebra */
+  tr.pf-row td, tr.pf-row:nth-child(even) td { background: #EEF2F4 !important; }
+  tr.bench-row td, tr.bench-row:nth-child(even) td { background: #FFF8EC !important; }
+
+  /* 5 · MICRO-DETALLES ================================================= */
+  /* Separadores principales más afilados con tinte teal */
+  hr, .separator { border: none; border-top: 2px solid var(--teal); opacity: 0.5; }
+  /* Badges más afilados */
+  .badge, .freq-badge {
+    border-radius: 3px !important;
+    letter-spacing: 0.4px;
+    font-weight: 700;
+  }
+  /* Tracking en mayúsculas de labels */
+  .pf-mgroup-title, .pf-stat-lbl, .pf-div-lbl, th {
+    letter-spacing: 0.5px;
+  }
+  /* Botones del selector: más afilados */
+  .rolling-win-btn { border-radius: 3px !important; }
+  /* Toolbar info más limpia */
+  .results-toolbar {
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--card);
+  }
+  /* Inputs de peso de la cartera: tipo terminal */
+  .pf-weight-input {
+    background: rgba(245, 247, 250, 0.6);
+    border-radius: 3px;
+    font-size: 13px;
+    font-feature-settings: "tnum" 1;
+  }
+  /* @media print: el refresh no cambia el PDF (mantenemos look original) */
+  @media print {
+    .section-title { border-top: none; padding-top: 0; }
+    .section-title::before { display: none; }
+    table tbody tr:nth-child(even) td { background: none !important; }
+    table tbody tr:hover td { background: none !important; }
+  }
+  .pf-thr-note { font-size: 12px; color: var(--text-muted); margin-left: 12px; font-style: italic; }
+  .monthly-pos-note {
+    margin-top: 10px; padding: 8px 14px; background: var(--card); border: 1px solid var(--border);
+    border-left: 3px solid var(--teal); border-radius: 6px; font-size: 13px; color: var(--text);
+  }
+  .freq-badge {
+    display: inline-block; padding: 1px 6px; border-radius: 4px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700;
+    margin-left: 6px; letter-spacing: 0.5px;
+  }
+  .freq-badge.freq-D { background: #E6F4F1; color: #0F7561; }
+  .freq-badge.freq-S { background: #FBF1E1; color: #8B5A1A; }
+  .freq-badge.freq-M { background: #EEE6F4; color: #5F3A82; }
+  .freq-badge.freq-irregular { background: #FDECEA; color: #8B2222; }
+  /* Cabecera de chart con controles */
+  .chart-card-header {
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
+    margin-bottom: 12px;
+  }
+  .chart-card-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .chart-fs-btn {
+    padding: 6px 8px; background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+    color: var(--text-soft); cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s ease;
+  }
+  .chart-fs-btn:hover { color: var(--navy); border-color: var(--teal); }
+  /* Modo pantalla completa */
+  .chart-card.chart-fullscreen {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 9999;
+    margin: 0 !important; border-radius: 0; background: var(--bg);
+    padding: 24px; overflow: hidden; display: flex; flex-direction: column;
+  }
+  .chart-card.chart-fullscreen .plotly-chart { flex: 1; height: auto !important; min-height: 0; }
+  body.chart-fs-active { overflow: hidden; }
+  @media print { .chart-card-actions { display: none; } }
+
 </style>
 </head>
 <body>
@@ -847,7 +1099,7 @@
   <!-- ============== SERIES UPLOADER ============== -->
   <div class="card series-uploader">
     <div class="card-title">Series a analizar</div>
-    <div class="card-subtitle">Hasta 5 series · marca una como Benchmark para activar métricas relativas (alfa, beta, TE…)</div>
+    <div class="card-subtitle">Hasta 12 series · marca una como Benchmark para activar métricas relativas (alfa, beta, TE…)</div>
     <div class="series-list" id="series-list"></div>
     <button class="btn-add-serie" id="btn-add-serie">+ Añadir serie</button>
     <div class="bench-status" id="bench-status" style="display: none;"></div>
@@ -888,6 +1140,8 @@
       <span class="toolbar-hint">Se abrirá el diálogo de impresión. Elige "Guardar como PDF" como destino.</span>
     </div>
 
+    <div class="pf-warn" id="freq-mix-warn" style="display:none;"></div>
+
     <h2 class="section-title">Resumen</h2>
     <div class="table-wrap">
       <table id="table-summary"><thead></thead><tbody></tbody></table>
@@ -907,6 +1161,68 @@
     <h2 class="section-title">Ratios ajustados al riesgo</h2>
     <div class="table-wrap">
       <table id="table-ratios"><thead></thead><tbody></tbody></table>
+    </div>
+
+    <div id="portfolio-section" style="display: none;">
+      <h2 class="section-title">Construcción de cartera y diversificación</h2>
+      <div class="section-note">Combina los fondos en una cartera con pesos, mide el beneficio de diversificación y compárala con la frontera eficiente. El benchmark (si lo hay) se usa solo como referencia, no entra en los pesos.</div>
+
+      <div class="pf-warn" id="pf-truncate-warn" style="display:none;"></div>
+
+      <h3 class="pf-subtitle">Matriz de correlación <button class="info-btn" data-info="corrMatrix" aria-label="Info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></button></h3>
+      <div class="section-note">Correlación de retornos diarios entre series, sobre la ventana común. <span style="color:#1E5DA8">Azul</span> (baja o negativa) = diversifican · <span style="color:#C0392B">rojo</span> (alta) = se solapan.</div>
+      <div class="chart-card"><div class="plotly-chart" id="chart-corr"></div></div>
+
+      <h3 class="pf-subtitle">Correlaciones por régimen <button class="info-btn" data-info="regimeCorr" aria-label="Info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></button></h3>
+      <div class="section-note">La matriz media esconde un sesgo: las correlaciones tienden a subir en las crisis. Aquí se separan los días bull y bear (según el drawdown del benchmark) para ver si la diversificación aguanta cuando hace falta.</div>
+      <div class="chart-card" id="pf-regime-corr"></div>
+
+      <h3 class="pf-subtitle">Pesos de la cartera</h3>
+      <div class="pf-builder">
+        <div class="pf-weights" id="pf-weights"></div>
+        <div class="pf-controls">
+          <div class="rolling-window-bar" style="margin:0;">
+            <span class="rolling-window-label">Modelo:</span>
+            <div class="rolling-window-buttons" id="pf-rebal-selector">
+              <button class="rolling-win-btn active" data-mode="monthly">Rebalanceo mensual</button>
+              <button class="rolling-win-btn" data-mode="buyhold">Buy &amp; hold</button>
+            </div>
+          </div>
+          <div class="pf-btn-row">
+            <button class="pf-mini-btn" id="pf-equalize">Equiponderar</button>
+            <button class="pf-mini-btn" id="pf-apply-minvol">Usar pesos mín. vol</button>
+            <button class="pf-mini-btn" id="pf-apply-maxsharpe">Usar pesos máx. Sharpe</button>
+            <button class="pf-calc-btn" id="pf-recalc">Actualizar cartera</button>
+          </div>
+          <div class="pf-weight-sum" id="pf-weight-sum"></div>
+        </div>
+      </div>
+
+      <div class="table-wrap" style="margin-top:20px;">
+        <table id="table-portfolio"><thead></thead><tbody></tbody></table>
+      </div>
+
+      <h3 class="pf-subtitle">Ficha completa de la cartera</h3>
+      <div class="section-note" id="pf-metrics-note">Todas las métricas se recalculan con los pesos y el modo seleccionados.</div>
+      <div class="pf-metrics-card" id="pf-metrics"></div>
+
+      <div class="pf-div-card" id="pf-diversification"></div>
+
+      <h3 class="pf-subtitle">Contribución al riesgo <button class="info-btn" data-info="riskContrib" aria-label="Info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></button></h3>
+      <div class="section-note">Cada fondo pesa una cosa en capital y otra en riesgo. Barra tenue = % del capital · barra sólida = % del riesgo total que aporta.</div>
+      <div class="chart-card"><div class="plotly-chart" id="chart-riskcontrib"></div></div>
+      <div class="pf-div-card" id="pf-riskcontrib-note" style="font-size:14px;"></div>
+
+      <div class="chart-card" style="margin-top:20px;">
+        <div class="chart-card-title">Cartera vs componentes vs benchmark (base 100)</div>
+        <div class="chart-card-subtitle">Todo recortado a la ventana común. Línea gruesa negra = cartera.</div>
+        <div class="plotly-chart" id="chart-pf-base100"></div>
+      </div>
+
+      <h3 class="pf-subtitle">Frontera eficiente <button class="info-btn" data-info="frontier" aria-label="Info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></button></h3>
+      <div class="section-note"><span id="pf-frontier-count">Carteras</span> long-only generadas al azar. Plano riesgo/retorno coloreado por Sharpe. La línea azul marca la frontera eficiente (el borde óptimo del conjunto). <strong>Diagnóstico in-sample: usa el pasado como si fuera el futuro, no es una recomendación forward.</strong></div>
+      <div class="chart-card"><div class="plotly-chart tall" id="chart-frontier"></div></div>
+      <div class="pf-frontier-weights" id="pf-frontier-weights"></div>
     </div>
 
     <div id="bench-section" style="display: none;">
@@ -964,9 +1280,22 @@
     <h2 class="section-title">Gráficos comparativos</h2>
 
     <div class="chart-grid">
-      <div class="chart-card">
-        <div class="chart-card-title">Evolución en base 100</div>
-        <div class="chart-card-subtitle">Todas las series superpuestas desde el primer dato disponible de cada una</div>
+      <div class="chart-card" id="base100-card">
+        <div class="chart-card-header">
+          <div>
+            <div class="chart-card-title">Evolución en base 100</div>
+            <div class="chart-card-subtitle">Todas las series superpuestas desde el primer dato disponible de cada una</div>
+          </div>
+          <div class="chart-card-actions">
+            <div class="rolling-window-buttons" id="base100-scale-selector">
+              <button class="rolling-win-btn active" data-scale="linear">Lineal</button>
+              <button class="rolling-win-btn" data-scale="log">Log</button>
+            </div>
+            <button class="chart-fs-btn" id="base100-fs-btn" title="Pantalla completa">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+            </button>
+          </div>
+        </div>
         <div class="plotly-chart" id="chart-base100"></div>
       </div>
     </div>
@@ -1091,14 +1420,19 @@ const DEF = {
   betaBear: { title: "Beta condicional Bear", def: "Sensibilidad del activo al benchmark calculada únicamente con los días en régimen bajista (benchmark en drawdown profundo).", formula: "β_bear = cov(r_a | bear, r_b | bear) / var(r_b | bear)", interp: "Si β_bear < β_bull → el fondo aporta downside protection. Si β_bear > β_bull → amplifica las caídas (mal). Métrica clave para diferenciar gestión defensiva." },
   hitRateB: { title: "Hit Rate", def: "Porcentaje de días en que el activo bate al benchmark dentro del régimen analizado.", formula: "Hit rate = nº días (r_a > r_b) / total días del régimen", interp: "> 50%: consistencia en batir al índice. Suele estar 45-55% incluso en fondos buenos: la ventaja se construye por magnitud, no por frecuencia." },
   upCondAvg: { title: "Rentabilidad media en días Up (Método A)", def: "Media aritmética de los retornos diarios del activo, considerando solo los días en que el benchmark sube.", formula: "media(r_activo | r_bench > 0)", interp: "Combinada con la del benchmark indica si participa proporcionalmente de las subidas. Si activo > benchmark en días Up, el activo sobreparticipa de las subidas (positivo)." },
-  dnCondAvg: { title: "Rentabilidad media en días Down (Método A)", def: "Media aritmética de los retornos diarios del activo, considerando solo los días en que el benchmark baja.", formula: "media(r_activo | r_bench < 0)", interp: "Si la del activo es menos negativa que la del benchmark, el activo amortigua las caídas. Métrica directa de protección a la baja." }
+  dnCondAvg: { title: "Rentabilidad media en días Down (Método A)", def: "Media aritmética de los retornos diarios del activo, considerando solo los días en que el benchmark baja.", formula: "media(r_activo | r_bench < 0)", interp: "Si la del activo es menos negativa que la del benchmark, el activo amortigua las caídas. Métrica directa de protección a la baja." },
+  corrMatrix: { title: "Matriz de correlación", def: "Correlación de los retornos diarios entre cada par de series, calculada sobre la ventana común a todas. Va de −1 a +1.", formula: "ρ(i,j) = cov(r_i, r_j) / (σ_i × σ_j)", interp: "Azul (baja o negativa) = los activos diversifican entre sí. Rojo (alta) = se solapan y aportan poco a la cartera. Ojo: las correlaciones tienden a 1 en las crisis, justo cuando más se necesita la diversificación." },
+  divRatio: { title: "Ratio de diversificación", def: "Media ponderada de las volatilidades individuales dividida por la volatilidad real de la cartera. Cuantifica cuánto riesgo se cancela al combinar activos no perfectamente correlacionados.", formula: "DR = (Σ wᵢ·σᵢ) / σ_cartera", interp: "= 1: no hay beneficio de diversificación (activos perfectamente correlacionados). > 1: la cartera tiene menos vol que la suma ponderada de sus partes. Cuanto más alto, mayor el efecto cartera." },
+  frontier: { title: "Frontera eficiente (Monte Carlo)", def: "Nube de carteras posibles generadas con pesos aleatorios long-only (sin posiciones cortas), situadas en el plano riesgo (vol anual) / retorno aritmético anualizado. Se marcan la cartera de mínima volatilidad y la de máximo Sharpe.", formula: "5.000 combinaciones de pesos wᵢ ≥ 0, Σwᵢ = 1", interp: "ADVERTENCIA: usa retornos y correlaciones pasados como si fueran el futuro (óptimo in-sample). El 'máximo Sharpe' es el que mejor lo hizo en ESE periodo, no necesariamente el que mejor lo hará. No es una recomendación forward, es un diagnóstico de eficiencia histórica." },
+  riskContrib: { title: "Contribución al riesgo", def: "Descomposición de Euler de la volatilidad de la cartera: qué fracción del riesgo total aporta cada fondo, contando su volatilidad propia Y sus correlaciones con el resto. Las contribuciones suman el 100%.", formula: "RC_i = w_i · (Σw)_i / (w'Σw)", interp: "Compáralo con el peso en capital: un fondo con el 15% del capital puede aportar el 40% del riesgo si es volátil y está correlacionado con el resto. La diversificación en capital no implica diversificación en riesgo. Una cartera 'risk parity' igualaría las barras sólidas, no las tenues." },
+  regimeCorr: { title: "Correlaciones por régimen", def: "Las mismas correlaciones entre fondos, pero calculadas por separado en los días bull (benchmark fuera de drawdown profundo) y bear (benchmark en drawdown por debajo del umbral).", formula: "ρ(i,j) condicionada al régimen del benchmark en cada día", interp: "Si las correlaciones bear son mucho mayores que las bull, la diversificación de la matriz media es engañosa: desaparece en las crisis, que es exactamente cuando la necesitas. Es uno de los fallos más comunes en carteras aparentemente bien diversificadas." }
 };
 
 // =============================================================================
 // CONFIG
 // =============================================================================
-const MAX_SERIES = 5;
-const SERIES_COLORS = ["#0E2340", "#1F8A8F", "#C4842A", "#1F6B47", "#7B4F8F"];
+const MAX_SERIES = 12;
+const SERIES_COLORS = ["#0E2340", "#1F8A8F", "#C4842A", "#7B4F8F", "#C0392B", "#1F6B47", "#2C6FA6", "#B5651D", "#A23B72", "#527A52", "#4D4D7A", "#8A6D1F"];
 const TRADING_DAYS = 252;
 
 // =============================================================================
@@ -1109,7 +1443,9 @@ const STATE = {
   nextId: 1,
   rf: 0.025,
   rollingWindow: "1Y", // "1Y", "3Y", "5Y"
-  regimeThreshold: -0.10 // umbral bear (drawdown)
+  regimeThreshold: -0.10, // umbral bear (drawdown)
+  regimeCorrThreshold: -0.10, // umbral para correlaciones por régimen del bloque cartera (-0.03, -0.05, -0.10)
+  base100Scale: 'linear' // 'linear' o 'log' para el gráfico base 100
 };
 
 // =============================================================================
@@ -1169,6 +1505,42 @@ function parseLine(line) {
   out.push(cur);
   return out;
 }
+
+// =============================================================================
+// FRECUENCIA · detección, normalización (domingo→viernes), factor de anualización
+// =============================================================================
+// Devuelve { freq: 'D'|'S'|'M'|'irregular', medianGap, factor, label }
+function detectFrequency(data) {
+  if (!data || data.length < 5) return { freq: 'D', medianGap: 1, factor: TRADING_DAYS, label: 'Diaria' };
+  const sorted = data.slice().sort((a, b) => a.date - b.date);
+  const gaps = [];
+  for (let i = 1; i < sorted.length; i++) gaps.push((sorted[i].date - sorted[i - 1].date) / 86400000);
+  gaps.sort((a, b) => a - b);
+  const median = gaps[Math.floor(gaps.length / 2)];
+  if (median <= 3) return { freq: 'D', medianGap: median, factor: 252, label: 'Diaria' };
+  if (median <= 10) return { freq: 'S', medianGap: median, factor: 52, label: 'Semanal' };
+  if (median >= 25 && median <= 35) return { freq: 'M', medianGap: median, factor: 12, label: 'Mensual' };
+  return { freq: 'irregular', medianGap: median, factor: Math.round(365 / median), label: `Irregular (~${Math.round(median)}d)` };
+}
+
+// Normaliza fechas semanales caídas en sáb/dom al viernes anterior (estándar de cierre de mercado).
+// Si dos puntos colapsan a la misma fecha, conservamos el último (el más reciente del grupo).
+function normalizeWeeklyDates(data, freq) {
+  if (freq !== 'S') return data;
+  const moved = data.map(d => {
+    const dow = d.date.getUTCDay(); // 0=dom, 6=sáb
+    if (dow === 0) return { date: new Date(d.date.getTime() - 2 * 86400000), vl: d.vl };
+    if (dow === 6) return { date: new Date(d.date.getTime() - 1 * 86400000), vl: d.vl };
+    return d;
+  });
+  // Dedupe por fecha (último gana)
+  const map = new Map();
+  moved.forEach(d => map.set(d.date.getTime(), d.vl));
+  return [...map.entries()].sort((a, b) => a[0] - b[0]).map(([t, vl]) => ({ date: new Date(t), vl }));
+}
+
+// Factor de anualización de una serie (cae en la propia serie tras detectarla)
+function annFactor(serie) { return (serie && serie.freq && serie.freq.factor) || TRADING_DAYS; }
 
 function parseDate(s) {
   const m = s.trim().match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
@@ -1284,10 +1656,12 @@ function cagrFromData(data) {
 }
 function totalReturn(data) { return data[data.length-1].vl/data[0].vl - 1; }
 function maxDD(prices) { return Math.min(...drawdownSeries(prices)); }
-function annualVol(returns) { return Stats.std(returns) * Math.sqrt(TRADING_DAYS); }
-function downsideVol(returns, target=0) {
+function annualVol(returns, factor) { factor = factor || TRADING_DAYS; return Stats.std(returns) * Math.sqrt(factor); }
+function downsideVol(returns, target, factor) {
+  target = target || 0;
+  factor = factor || TRADING_DAYS;
   const downs = returns.map(r => Math.min(r-target, 0));
-  return Math.sqrt(Stats.mean(downs.map(x => x*x))) * Math.sqrt(TRADING_DAYS);
+  return Math.sqrt(Stats.mean(downs.map(x => x*x))) * Math.sqrt(factor);
 }
 function valueAtRisk(returns, level) { return Stats.percentile(returns, (1-level)*100); }
 function cvar(returns, level) {
@@ -1365,7 +1739,7 @@ function alignSeries(a, b) {
 }
 function betaCalc(rA, rB) { const v = Stats.variance(rB); return (!isFinite(v) || v === 0) ? NaN : Stats.cov(rA, rB)/v; }
 function alphaJensen(cA, cB, beta, rf) { return (cA-rf) - beta*(cB-rf); }
-function trackingError(rA, rB) { const diff = rA.map((x,i) => x-rB[i]); return Stats.std(diff)*Math.sqrt(TRADING_DAYS); }
+function trackingError(rA, rB, factor) { factor = factor || TRADING_DAYS; const diff = rA.map((x,i) => x-rB[i]); return Stats.std(diff)*Math.sqrt(factor); }
 function informationRatio(cA, cB, te) { return (!isFinite(te) || te === 0) ? NaN : (cA-cB)/te; }
 function upCapture(rA, rB) {
   const idx = rB.map((x,i) => x>0?i:-1).filter(i => i>=0);
@@ -1451,26 +1825,28 @@ function rollingCAGR(data, windowDays) {
   }
   return out;
 }
-function rollingVol(data, windowDays) {
+function rollingVol(data, windowDays, factor) {
+  factor = factor || TRADING_DAYS;
   const r = returnsFromPrices(data.map(d => d.vl));
   const dates = data.slice(1).map(d => d.date);
   const out = [];
   for (let i=windowDays-1; i<r.length; i++) {
     const sub = r.slice(i-windowDays+1, i+1);
-    out.push({ date: dates[i], value: Stats.std(sub)*Math.sqrt(TRADING_DAYS) });
+    out.push({ date: dates[i], value: Stats.std(sub)*Math.sqrt(factor) });
   }
   return out;
 }
-function rollingSharpe(data, windowDays, rf) {
+function rollingSharpe(data, windowDays, rf, factor) {
+  factor = factor || TRADING_DAYS;
   const r = returnsFromPrices(data.map(d => d.vl));
   const dates = data.slice(1).map(d => d.date);
-  const rfD = rf/TRADING_DAYS;
+  const rfD = rf/factor;
   const out = [];
   for (let i=windowDays-1; i<r.length; i++) {
     const sub = r.slice(i-windowDays+1, i+1);
     const vol = Stats.std(sub);
     if (vol === 0) continue;
-    out.push({ date: dates[i], value: ((Stats.mean(sub)-rfD)/vol)*Math.sqrt(TRADING_DAYS) });
+    out.push({ date: dates[i], value: ((Stats.mean(sub)-rfD)/vol)*Math.sqrt(factor) });
   }
   return out;
 }
@@ -1522,11 +1898,12 @@ function findBearEpisodes(benchData, threshold) {
   return episodes;
 }
 
-// Anualizar retornos diarios geométricamente
-function annualizeDailyReturns(returns) {
+// Anualizar retornos geométricamente · factor opcional (252/52/12)
+function annualizeDailyReturns(returns, factor) {
   if (returns.length === 0) return NaN;
+  factor = factor || TRADING_DAYS;
   const prod = returns.reduce((p, r) => p * (1 + r), 1);
-  return Math.pow(prod, TRADING_DAYS / returns.length) - 1;
+  return Math.pow(prod, factor / returns.length) - 1;
 }
 
 // % días en que r_a > r_b (activo bate al benchmark)
@@ -1538,7 +1915,8 @@ function hitRateBeating(rA, rB) {
 }
 
 // Método B: métricas de un activo dividido en bull/bear según benchmark
-function computeRegimeMetricsB(activeData, benchData, threshold) {
+function computeRegimeMetricsB(activeData, benchData, threshold, factor) {
+  factor = factor || TRADING_DAYS;
   const { a, b } = alignSeries(activeData, benchData);
   if (a.length < 30) return null;
   const benchClass = classifyRegimesB(b, threshold);
@@ -1554,12 +1932,12 @@ function computeRegimeMetricsB(activeData, benchData, threshold) {
     bearDays: bearA.length,
     bullPctTime: bullA.length / rA.length,
     bearPctTime: bearA.length / rA.length,
-    bullCAGR_A: annualizeDailyReturns(bullA),
-    bearCAGR_A: annualizeDailyReturns(bearA),
-    bullCAGR_B: annualizeDailyReturns(bullB),
-    bearCAGR_B: annualizeDailyReturns(bearB),
-    bullVol_A: bullA.length > 1 ? Stats.std(bullA) * Math.sqrt(TRADING_DAYS) : NaN,
-    bearVol_A: bearA.length > 1 ? Stats.std(bearA) * Math.sqrt(TRADING_DAYS) : NaN,
+    bullCAGR_A: annualizeDailyReturns(bullA, factor),
+    bearCAGR_A: annualizeDailyReturns(bearA, factor),
+    bullCAGR_B: annualizeDailyReturns(bullB, factor),
+    bearCAGR_B: annualizeDailyReturns(bearB, factor),
+    bullVol_A: bullA.length > 1 ? Stats.std(bullA) * Math.sqrt(factor) : NaN,
+    bearVol_A: bearA.length > 1 ? Stats.std(bearA) * Math.sqrt(factor) : NaN,
     bullBeta: bullA.length > 1 ? betaCalc(bullA, bullB) : NaN,
     bearBeta: bearA.length > 1 ? betaCalc(bearA, bearB) : NaN,
     bullHitRate: hitRateBeating(bullA, bullB),
@@ -1685,7 +2063,7 @@ function renderSeriesList() {
         <input type="file" accept=".csv" data-input="${s.id}">
         ${s.data
           ? `<div class="serie-drop-loaded">
-              <div class="serie-file-name">${escapeHtml(s.fileName)}</div>
+              <div class="serie-file-name">${escapeHtml(s.fileName)} ${s.freq ? `<span class="freq-badge freq-${s.freq.freq}" title="${s.freq.label} (factor anualización ${s.freq.factor})">${s.freq.freq}</span>` : ''}</div>
               <div class="serie-meta">${s.data.length} obs · ${fmt.date(s.data[0].date)} → ${fmt.date(s.data[s.data.length-1].date)}</div>
             </div>`
           : `<div class="serie-drop-empty"><strong>Arrastra el CSV</strong> o haz click</div>`
@@ -1789,8 +2167,11 @@ async function handleSerieFile(serieId, file) {
   reader.onerror = () => showError(`Error leyendo "${file.name}".`);
   reader.onload = e => {
     try {
-      const data = parseCSV(e.target.result);
+      let data = parseCSV(e.target.result);
+      const freq = detectFrequency(data);
+      data = normalizeWeeklyDates(data, freq.freq);
       s.data = data;
+      s.freq = freq;
       s.fileName = file.name;
       // Si label por defecto, intenta deducir de filename
       if (s.label === `Serie ${s.id}`) {
@@ -1830,6 +2211,7 @@ function computeSerieMetrics(s) {
   const data = s.data;
   const prices = data.map(d => d.vl);
   const r = returnsFromPrices(prices);
+  const f = annFactor(s);
   return {
     serie: s,
     data,
@@ -1841,8 +2223,8 @@ function computeSerieMetrics(s) {
     years: (data[data.length-1].date - data[0].date) / (1000*60*60*24*365.25),
     total: totalReturn(data),
     cagr: cagrFromData(data),
-    vol: annualVol(r),
-    dvol: downsideVol(r),
+    vol: annualVol(r, f),
+    dvol: downsideVol(r, 0, f),
     var95: valueAtRisk(r, 0.95),
     var99: valueAtRisk(r, 0.99),
     cvar95: cvar(r, 0.95),
@@ -1852,10 +2234,10 @@ function computeSerieMetrics(s) {
     mdd: maxDD(prices),
     pain: painIndex(prices),
     ulcer: ulcerIndex(prices),
-    sharpe: sharpe(cagrFromData(data), annualVol(r), STATE.rf),
-    sortino: sortino(cagrFromData(data), downsideVol(r), STATE.rf),
+    sharpe: sharpe(cagrFromData(data), annualVol(r, f), STATE.rf),
+    sortino: sortino(cagrFromData(data), downsideVol(r, 0, f), STATE.rf),
     calmar: calmar(cagrFromData(data), maxDD(prices)),
-    omega: omega(r, STATE.rf/TRADING_DAYS),
+    omega: omega(r, STATE.rf/f),
     martin: martinRatio(cagrFromData(data), STATE.rf, ulcerIndex(prices))
   };
 }
@@ -1863,27 +2245,37 @@ function computeSerieMetrics(s) {
 function computeBenchmarkMetrics(active, bench) {
   if (!bench || !bench.data) return null;
   if (active.id === bench.id) return null;
-  const { a, b } = alignSeries(active.data, bench.data);
-  if (a.length < 30) return { partial: true, msg: `Solo ${a.length} fechas comunes.` };
+  // Si frecuencias distintas, remuestrear ambos al factor más bajo (menor frecuencia)
+  const res = alignManyResampled([active, bench]);
+  if (!res || !res.aligned || res.aligned.n < 30) {
+    const n = (res && res.aligned) ? res.aligned.n : 0;
+    return { partial: true, msg: `Solo ${n} fechas comunes.` };
+  }
+  const factor = res.factor;
+  const a = res.aligned.dates.map((d, i) => ({ date: d, vl: res.aligned.cols[0][i] }));
+  const b = res.aligned.dates.map((d, i) => ({ date: d, vl: res.aligned.cols[1][i] }));
   const rA = returnsFromPrices(a.map(d => d.vl));
   const rB = returnsFromPrices(b.map(d => d.vl));
   const cA = cagrFromData(a);
   const cB = cagrFromData(b);
-  const vA = annualVol(rA);
-  const vB = annualVol(rB);
+  const vA = annualVol(rA, factor);
+  const vB = annualVol(rB, factor);
   const beta = betaCalc(rA, rB);
+  const r2v = Math.pow(Stats.corr(rA, rB), 2);
   return {
     partial: a.length < active.data.length * 0.8,
     aligned: a.length,
     beta,
     alpha: alphaJensen(cA, cB, beta, STATE.rf),
-    r2: Math.pow(Stats.corr(rA, rB), 2),
+    closet: r2v > 0.95,
+    r2: r2v,
     corr: Stats.corr(rA, rB),
-    te: trackingError(rA, rB),
-    ir: informationRatio(cA, cB, trackingError(rA, rB)),
+    te: trackingError(rA, rB, factor),
+    ir: informationRatio(cA, cB, trackingError(rA, rB, factor)),
     upcap: upCapture(rA, rB),
     downcap: downCapture(rA, rB),
-    m2: m2(sharpe(cA, vA, STATE.rf), vB, STATE.rf)
+    m2: m2(sharpe(cA, vA, STATE.rf), vB, STATE.rf),
+    factor, resampled: res.resampled
   };
 }
 
@@ -2013,7 +2405,7 @@ function renderBenchmarkTable(metrics) {
       <td><span class="serie-dot" style="background:${s.color}"></span>${escapeHtml(s.label)}${partialBadge}</td>
       <td>${fmt.num(vs.beta, 2)}</td>
       <td class="${signClass(vs.alpha)}">${fmt.pct(vs.alpha)}</td>
-      <td>${fmt.num(vs.r2, 3)}</td>
+      <td>${fmt.num(vs.r2, 3)}${vs.closet ? ' <span class="badge warn" title="R² > 0,95: el fondo replica casi por completo al índice">CLOSET</span>' : ''}</td>
       <td>${fmt.num(vs.corr, 3)}</td>
       <td>${fmt.pct(vs.te)}</td>
       <td>${fmt.num(vs.ir, 2)}</td>
@@ -2197,7 +2589,7 @@ function renderRegimeTableB(activeMetrics, benchMetric, threshold) {
   </tr>`;
 
   // Fila resumen del benchmark
-  const benchSelf = computeRegimeMetricsB(benchMetric.data, benchMetric.data, threshold);
+  const benchSelf = computeRegimeMetricsB(benchMetric.data, benchMetric.data, threshold, annFactor(benchMetric.serie));
   const benchRow = benchSelf ? `<tr class="bench-row">
     <td><span class="serie-dot" style="background:${benchMetric.serie.color}"></span>${escapeHtml(benchMetric.serie.label)}<span class="badge">BENCH</span></td>
     <td>${fmt.pct(benchSelf.bullPctTime, 1)}</td>
@@ -2213,7 +2605,8 @@ function renderRegimeTableB(activeMetrics, benchMetric, threshold) {
   </tr>` : "";
 
   const rows = activeMetrics.map(m => {
-    const reg = computeRegimeMetricsB(m.data, benchMetric.data, threshold);
+    const fc = Math.min(annFactor(m.serie), annFactor(benchMetric.serie));
+    const reg = computeRegimeMetricsB(m.data, benchMetric.data, threshold, fc);
     if (!reg) return `<tr><td><span class="serie-dot" style="background:${m.serie.color}"></span>${escapeHtml(m.serie.label)}</td><td colspan="10" class="neg">Sin fechas comunes suficientes</td></tr>`;
     const warn = (reg.bullDays < 60 || reg.bearDays < 60) ? '<span class="badge warn" title="muestra pequeña">pocos días</span>' : '';
     return `<tr>
@@ -2276,7 +2669,7 @@ const PLOTLY_LAYOUT_BASE = {
   plot_bgcolor: 'rgba(0,0,0,0)',
   xaxis: { gridcolor: "#F0F2F5", linecolor: "#E5E9EE" },
   yaxis: { gridcolor: "#F0F2F5", linecolor: "#E5E9EE" },
-  hoverlabel: { font: { family: "'IBM Plex Mono', monospace", size: 11 }, bgcolor: "#0E2340", bordercolor: "#1F8A8F" },
+  hoverlabel: { font: { family: "'IBM Plex Mono', monospace", size: 11, color: "#FFFFFF" }, bgcolor: "#0E2340", bordercolor: "#1F8A8F" },
   legend: { orientation: "h", yanchor: "bottom", y: 1.02, xanchor: "right", x: 1 }
 };
 
@@ -2291,9 +2684,14 @@ function renderBase100Chart(metrics) {
       line: { color: m.serie.color, width: 2, dash: m.serie.isBenchmark ? 'dash' : 'solid' }
     };
   });
+  const isLog = STATE.base100Scale === 'log';
   Plotly.newPlot("chart-base100", traces, {
     ...PLOTLY_LAYOUT_BASE,
-    yaxis: {...PLOTLY_LAYOUT_BASE.yaxis, title: { text: "Base 100", standoff: 8 }}
+    yaxis: {
+      ...PLOTLY_LAYOUT_BASE.yaxis,
+      title: { text: isLog ? "Base 100 (log)" : "Base 100", standoff: 8 },
+      type: isLog ? 'log' : 'linear'
+    }
   }, PLOTLY_CONFIG);
 }
 
@@ -2438,7 +2836,8 @@ function drawScatter(divId, m, benchMetric) {
 }
 
 function renderRollingCharts(metrics) {
-  const windowMap = { "1Y": TRADING_DAYS, "3Y": TRADING_DAYS*3, "5Y": TRADING_DAYS*5 };
+  // Pasos por ventana según frecuencia: diaria=252/3y/5y, semanal=52/156/260, mensual=12/36/60
+  const stepsByFactor = f => ({ "1Y": f, "3Y": f*3, "5Y": f*5 });
   const windowLabel = { "1Y": "1 año", "3Y": "3 años", "5Y": "5 años" };
   // Colores por ventana (modo 1 serie)
   const winColors = { "1Y": "#0E2340", "3Y": "#1F8A8F", "5Y": "#C4842A" };
@@ -2464,10 +2863,11 @@ function renderRollingCharts(metrics) {
 
   // ========== MODO MULTI-SERIE ==========
   if (!isSingle) {
-    const windowDays = windowMap[STATE.rollingWindow];
     const wLabel = windowLabel[STATE.rollingWindow];
-    // Excluir benchmark de los gráficos rolling (CAGR/Vol/Sharpe son solo de los fondos analizados)
-    const eligible = metrics.filter(m => !m.serie.isBenchmark && m.data.length > windowDays + 10);
+    // Cada serie tiene su propio número de muestras por ventana según su frecuencia
+    const winSamples = m => stepsByFactor(annFactor(m.serie))[STATE.rollingWindow];
+    // Excluir benchmark y filtrar por suficientes muestras (cada una con su factor)
+    const eligible = metrics.filter(m => !m.serie.isBenchmark && m.data.length > winSamples(m) + 10);
     if (eligible.length === 0) {
       document.getElementById("rolling-section").style.display = "none";
       return;
@@ -2479,19 +2879,21 @@ function renderRollingCharts(metrics) {
     document.getElementById("sub-rolling-beta").textContent = `Beta vs benchmark · ventana ${wLabel}`;
 
     const tracesRet = eligible.map(m => {
-      const s = rollingCAGR(m.data, windowDays);
+      const s = rollingCAGR(m.data, winSamples(m));
       return { x: s.map(p => p.date), y: s.map(p => p.value*100), name: m.serie.label, type:'scatter', mode:'lines', line:{color: m.serie.color, width:1.8, dash: m.serie.isBenchmark ? 'dash' : 'solid'} };
     });
     Plotly.newPlot("chart-rolling-return", tracesRet, {...PLOTLY_LAYOUT_BASE, yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:{text:"CAGR (%)", standoff:8}, ticksuffix:"%"}}, PLOTLY_CONFIG);
 
     const tracesVol = eligible.map(m => {
-      const s = rollingVol(m.data, windowDays);
+      const f = annFactor(m.serie);
+      const s = rollingVol(m.data, winSamples(m), f);
       return { x: s.map(p => p.date), y: s.map(p => p.value*100), name: m.serie.label, type:'scatter', mode:'lines', line:{color: m.serie.color, width:1.8, dash: m.serie.isBenchmark ? 'dash' : 'solid'} };
     });
     Plotly.newPlot("chart-rolling-vol", tracesVol, {...PLOTLY_LAYOUT_BASE, yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:{text:"Vol anual (%)", standoff:8}, ticksuffix:"%"}}, PLOTLY_CONFIG);
 
     const tracesSh = eligible.map(m => {
-      const s = rollingSharpe(m.data, windowDays, STATE.rf);
+      const f = annFactor(m.serie);
+      const s = rollingSharpe(m.data, winSamples(m), STATE.rf, f);
       return { x: s.map(p => p.date), y: s.map(p => p.value), name: m.serie.label, type:'scatter', mode:'lines', line:{color: m.serie.color, width:1.8, dash: m.serie.isBenchmark ? 'dash' : 'solid'} };
     });
     Plotly.newPlot("chart-rolling-sharpe", tracesSh, {...PLOTLY_LAYOUT_BASE, yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:{text:"Sharpe", standoff:8}, zeroline:true, zerolinecolor:"#E5E9EE"}}, PLOTLY_CONFIG);
@@ -2500,7 +2902,7 @@ function renderRollingCharts(metrics) {
     if (bench) {
       document.getElementById("card-rolling-beta").style.display = "block";
       const tracesBeta = eligible.map(m => {
-        const s = rollingBetaSeries(m.data, bench.data, windowDays);
+        const s = rollingBetaSeries(m.data, bench.data, winSamples(m));
         return { x: s.map(p => p.date), y: s.map(p => p.value), name: m.serie.label, type:'scatter', mode:'lines', line:{color: m.serie.color, width:1.8} };
       });
       Plotly.newPlot("chart-rolling-beta", tracesBeta, {...PLOTLY_LAYOUT_BASE, yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:{text:"Beta", standoff:8}, zeroline:true, zerolinecolor:"#E5E9EE"}}, PLOTLY_CONFIG);
@@ -2512,7 +2914,9 @@ function renderRollingCharts(metrics) {
 
   // ========== MODO 1 SERIE: las 3 ventanas superpuestas ==========
   const m = metrics[0];
-  const windowsUsable = Object.keys(windowMap).filter(w => m.data.length > windowMap[w] + 10);
+  const factor = annFactor(m.serie);
+  const stepsThis = stepsByFactor(factor);
+  const windowsUsable = Object.keys(stepsThis).filter(w => m.data.length > stepsThis[w] + 10);
 
   if (windowsUsable.length === 0) {
     document.getElementById("rolling-section").style.display = "none";
@@ -2526,21 +2930,21 @@ function renderRollingCharts(metrics) {
 
   // Rolling CAGR
   const tracesRet = windowsUsable.map(w => {
-    const s = rollingCAGR(m.data, windowMap[w]);
+    const s = rollingCAGR(m.data, stepsThis[w]);
     return { x: s.map(p => p.date), y: s.map(p => p.value*100), name: windowLabel[w], type:'scatter', mode:'lines', line:{color: winColors[w], width:1.8} };
   });
   Plotly.newPlot("chart-rolling-return", tracesRet, {...PLOTLY_LAYOUT_BASE, yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:{text:"CAGR (%)", standoff:8}, ticksuffix:"%"}}, PLOTLY_CONFIG);
 
   // Rolling vol
   const tracesVol = windowsUsable.map(w => {
-    const s = rollingVol(m.data, windowMap[w]);
+    const s = rollingVol(m.data, stepsThis[w], factor);
     return { x: s.map(p => p.date), y: s.map(p => p.value*100), name: windowLabel[w], type:'scatter', mode:'lines', line:{color: winColors[w], width:1.8} };
   });
   Plotly.newPlot("chart-rolling-vol", tracesVol, {...PLOTLY_LAYOUT_BASE, yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:{text:"Vol anual (%)", standoff:8}, ticksuffix:"%"}}, PLOTLY_CONFIG);
 
   // Rolling sharpe
   const tracesSh = windowsUsable.map(w => {
-    const s = rollingSharpe(m.data, windowMap[w], STATE.rf);
+    const s = rollingSharpe(m.data, stepsThis[w], STATE.rf, factor);
     return { x: s.map(p => p.date), y: s.map(p => p.value), name: windowLabel[w], type:'scatter', mode:'lines', line:{color: winColors[w], width:1.8} };
   });
   Plotly.newPlot("chart-rolling-sharpe", tracesSh, {...PLOTLY_LAYOUT_BASE, yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:{text:"Sharpe", standoff:8}, zeroline:true, zerolinecolor:"#E5E9EE"}}, PLOTLY_CONFIG);
@@ -2569,23 +2973,38 @@ function drawHeatmap(divId, m) {
   const years = [...new Set(keys.map(k => +k.split("-")[0]))].sort();
   const months = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
   const z = [], txt = [];
+  // % positivos por año (meses ≥ 0)
+  const posPerYear = [];
   for (const y of years) {
     const row = [], rowT = [];
+    let pos = 0, total = 0;
     for (let mo=1; mo<=12; mo++) {
       const k = `${y}-${String(mo).padStart(2,'0')}`;
       const v = monthly.get(k);
       if (v === undefined) { row.push(null); rowT.push(""); }
-      else { row.push(v*100); rowT.push(fmt.pct(v, 2)); }
+      else { row.push(v*100); rowT.push(fmt.pct(v, 2)); total++; if (v >= 0) pos++; }
     }
     z.push(row); txt.push(rowT);
+    posPerYear.push(total > 0 ? pos / total : null);
   }
   const yearly = yearlyReturns(m.data);
-  const headerMonths = [...months, "Año"];
+  // Columna "Año" (rentabilidad anual)
   for (let i=0; i<years.length; i++) {
     const yv = yearly.get(years[i]);
     z[i].push(yv !== undefined ? yv*100 : null);
     txt[i].push(yv !== undefined ? fmt.pct(yv, 2) : "");
   }
+  // Columna "% pos." (meses positivos del año, en escala 0-100 para que use la misma rampa)
+  for (let i=0; i<years.length; i++) {
+    const p = posPerYear[i];
+    // Mapeo de [0%, 100%] a la escala del heatmap centrada en 0: 0% → -100, 50% → 0, 100% → +100
+    z[i].push(p !== null ? (p - 0.5) * 200 : null);
+    txt[i].push(p !== null ? fmt.pct(p, 0) : "");
+  }
+  const headerMonths = [...months, "Año", "% pos."];
+  // % positivos global (meses ≥ 0 / total de meses con dato)
+  const allMonths = [...monthly.values()];
+  const globalPos = allMonths.length ? allMonths.filter(v => v >= 0).length / allMonths.length : null;
   const heat = {
     z, x: headerMonths, y: years.map(String),
     type: 'heatmap',
@@ -2598,9 +3017,699 @@ function drawHeatmap(divId, m) {
   Plotly.newPlot(divId, [heat], {
     ...PLOTLY_LAYOUT_BASE,
     margin: { l:60, r:80, t:10, b:40 },
-    xaxis: { side:"top", linecolor:"transparent" },
-    yaxis: { autorange:"reversed", linecolor:"transparent" }
+    xaxis: { type: "category", side:"top", linecolor:"transparent" },
+    yaxis: { type: "category", autorange:"reversed", linecolor:"transparent" }
   }, PLOTLY_CONFIG);
+  // Nota global bajo el heatmap (creada si no existe)
+  const containerId = divId + "-pos-note";
+  let noteEl = document.getElementById(containerId);
+  if (!noteEl) {
+    noteEl = document.createElement("div");
+    noteEl.id = containerId;
+    noteEl.className = "monthly-pos-note";
+    document.getElementById(divId).insertAdjacentElement("afterend", noteEl);
+  }
+  if (globalPos !== null) {
+    const totalMeses = allMonths.length;
+    const mesesPos = allMonths.filter(v => v >= 0).length;
+    noteEl.innerHTML = `<strong>Meses positivos (≥ 0):</strong> ${mesesPos} de ${totalMeses} (<strong>${fmt.pct(globalPos, 1)}</strong>) en toda la ventana.`;
+  } else { noteEl.innerHTML = ""; }
+}
+
+// =============================================================================
+// BLOQUE CARTERA · alineación múltiple, construcción, diversificación, frontera
+// =============================================================================
+const PF_COLOR = "#111827"; // color de la cartera combinada (negro grafito, distinto de las series)
+
+// Alinea N series sobre sus fechas comunes (intersección estricta).
+function alignMany(seriesArr) {
+  if (!seriesArr.length) return null;
+  const maps = seriesArr.map(s => new Map(s.data.map(d => [d.date.getTime(), d.vl])));
+  let common = [...maps[0].keys()];
+  for (let i = 1; i < maps.length; i++) common = common.filter(t => maps[i].has(t));
+  common.sort((a, b) => a - b);
+  if (common.length < 2) return { dates: [], cols: maps.map(() => []), n: 0 };
+  const dates = common.map(t => new Date(t));
+  const cols = maps.map(m => common.map(t => m.get(t)));
+  return { dates, cols, n: common.length };
+}
+
+// Remuestrea una serie diaria a viernes (último viernes con dato de cada semana ISO).
+// Si la serie ya es semanal, se devuelve tal cual.
+function resampleToWeekly(serie) {
+  if (serie.freq && serie.freq.freq === 'S') return serie;
+  const sorted = serie.data.slice().sort((a, b) => a.date - b.date);
+  // Para cada semana ISO, conserva la última observación disponible
+  const byWeek = new Map();
+  for (const d of sorted) {
+    // ISO week key: YYYY-WW
+    const dt = new Date(Date.UTC(d.date.getUTCFullYear(), d.date.getUTCMonth(), d.date.getUTCDate()));
+    const dayNum = dt.getUTCDay() || 7;
+    dt.setUTCDate(dt.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(dt.getUTCFullYear(), 0, 1));
+    const week = Math.ceil((((dt - yearStart) / 86400000) + 1) / 7);
+    const key = `${dt.getUTCFullYear()}-${week.toString().padStart(2, '0')}`;
+    byWeek.set(key, d); // último gana (las series están ordenadas)
+  }
+  // Mover cada observación al viernes de su semana (estándar de cierre)
+  const out = [];
+  for (const [, d] of byWeek) {
+    const dt = new Date(d.date.getTime());
+    const dow = dt.getUTCDay() || 7; // 1=lun..7=dom
+    const offset = 5 - dow; // 5=vie
+    dt.setUTCDate(dt.getUTCDate() + offset);
+    out.push({ date: dt, vl: d.vl });
+  }
+  out.sort((a, b) => a.date - b.date);
+  return { ...serie, data: out, freq: { ...serie.freq, freq: 'S', factor: 52, label: 'Semanal (remuestreada)' } };
+}
+
+// Remuestrea a fin de mes (último dato de cada mes natural).
+function resampleToMonthly(serie) {
+  if (serie.freq && serie.freq.freq === 'M') return serie;
+  const sorted = serie.data.slice().sort((a, b) => a.date - b.date);
+  const byMonth = new Map();
+  for (const d of sorted) {
+    const key = `${d.date.getUTCFullYear()}-${String(d.date.getUTCMonth() + 1).padStart(2, '0')}`;
+    byMonth.set(key, d);
+  }
+  const out = [...byMonth.values()].sort((a, b) => a.date - b.date);
+  return { ...serie, data: out, freq: { ...serie.freq, freq: 'M', factor: 12, label: 'Mensual (remuestreada)' } };
+}
+
+// Devuelve la frecuencia más baja (factor menor) del grupo.
+// Orden: D=252 > S=52 > M=12 > irregular(variable). Tomamos la del factor más bajo.
+function commonFrequency(seriesArr) {
+  let best = { freq: 'D', factor: 252 };
+  for (const s of seriesArr) {
+    const f = s.freq || { freq: 'D', factor: 252 };
+    if (f.factor < best.factor) best = f;
+  }
+  return best;
+}
+
+// Alinea N series llevándolas todas a la frecuencia más baja del grupo.
+// Devuelve { aligned, factor, freqLabel, resampled: boolean }
+function alignManyResampled(seriesArr) {
+  if (!seriesArr.length) return null;
+  const target = commonFrequency(seriesArr);
+  let resampled = false;
+  const normalized = seriesArr.map(s => {
+    const f = (s.freq && s.freq.factor) || 252;
+    if (f === target.factor) return s;
+    resampled = true;
+    if (target.freq === 'S') return resampleToWeekly(s);
+    if (target.freq === 'M') return resampleToMonthly(s);
+    return s;
+  });
+  const aligned = alignMany(normalized);
+  return { aligned, factor: target.factor, freqLabel: target.label, freq: target.freq, resampled, series: normalized };
+}
+
+// Construye la serie de precios de la cartera combinada.
+// mode: 'monthly' (rebalanceo al cambiar de mes) | 'buyhold' (sin rebalanceo)
+function buildPortfolioSeries(aligned, weights, mode) {
+  const { dates, cols } = aligned;
+  const N = dates.length, K = cols.length;
+  const rets = cols.map(p => returnsFromPrices(p)); // cada uno longitud N-1
+  let v = weights.slice();                          // valores por activo (suman 1)
+  const pv = [1];
+  for (let t = 1; t < N; t++) {
+    for (let k = 0; k < K; k++) v[k] *= (1 + rets[k][t - 1]);
+    const total = v.reduce((s, x) => s + x, 0);
+    pv.push(total);
+    if (mode === 'monthly' && dates[t].getUTCMonth() !== dates[t - 1].getUTCMonth()) {
+      for (let k = 0; k < K; k++) v[k] = total * weights[k];
+    }
+  }
+  return dates.map((d, i) => ({ date: d, vl: pv[i] }));
+}
+
+// Lee y normaliza los pesos de los inputs. Devuelve {weights, rawSum} o null si inválido.
+function readWeights(universe) {
+  const raw = universe.map(m => {
+    const el = document.getElementById(`w-${m.serie.id}`);
+    const v = el ? parseFloat((el.value || "").replace(",", ".")) : NaN;
+    return isFinite(v) && v >= 0 ? v : 0;
+  });
+  const rawSum = raw.reduce((s, x) => s + x, 0);
+  if (rawSum <= 0) return null;
+  return { weights: raw.map(x => x / rawSum), rawSum, raw };
+}
+
+// (ret aritmético anualizado, vol anual) de unos pesos dados, sobre rets diarios comunes.
+function portfolioRetVol(rets, weights, factor) {
+  factor = factor || TRADING_DAYS;
+  const K = rets.length, T = rets[0].length;
+  let m = 0; const port = new Array(T);
+  for (let t = 0; t < T; t++) {
+    let pr = 0;
+    for (let k = 0; k < K; k++) pr += weights[k] * rets[k][t];
+    port[t] = pr; m += pr;
+  }
+  m /= T;
+  let s2 = 0;
+  for (let t = 0; t < T; t++) { const d = port[t] - m; s2 += d * d; }
+  const sd = Math.sqrt(s2 / (T - 1));
+  return { ret: m * factor, vol: sd * Math.sqrt(factor) };
+}
+
+// Frontera eficiente por Monte Carlo, long-only.
+function efficientFrontier(aligned, rf, nSim, factor) {
+  factor = factor || TRADING_DAYS;
+  const rets = aligned.cols.map(p => returnsFromPrices(p));
+  const K = rets.length, T = rets[0].length;
+  // Más activos → más simulaciones para cubrir mejor el espacio de pesos (con tope)
+  if (!nSim) nSim = Math.min(16000, Math.max(5000, 1600 * K));
+  const means = rets.map(r => Stats.mean(r));
+  const points = [];
+  let best = { sharpe: -Infinity }, minv = { vol: Infinity };
+  for (let s = 0; s < nSim; s++) {
+    const w = new Array(K); let sum = 0;
+    for (let k = 0; k < K; k++) { w[k] = -Math.log(Math.random() + 1e-12); sum += w[k]; }
+    for (let k = 0; k < K; k++) w[k] /= sum;
+    let m = 0;
+    for (let k = 0; k < K; k++) m += w[k] * means[k];
+    let s2 = 0;
+    for (let t = 0; t < T; t++) {
+      let pr = 0;
+      for (let k = 0; k < K; k++) pr += w[k] * rets[k][t];
+      const d = pr - m; s2 += d * d;
+    }
+    const sd = Math.sqrt(s2 / (T - 1));
+    const annRet = m * factor, annVol = sd * Math.sqrt(factor);
+    const sh = annVol === 0 ? -Infinity : (annRet - rf) / annVol;
+    const pt = { ret: annRet, vol: annVol, sharpe: sh, w: w.slice() };
+    points.push(pt);
+    if (sh > best.sharpe) best = pt;
+    if (annVol < minv.vol) minv = pt;
+  }
+  return { points, maxSharpe: best, minVol: minv, means, rets, factor };
+}
+
+// Borde eficiente: carteras no dominadas (Pareto) de la nube simulada.
+// Partiendo de menor vol hacia mayor vol, conservamos las que mejoran el retorno.
+function paretoFrontier(points) {
+  const pts = points.slice().sort((a, b) => a.vol - b.vol || b.ret - a.ret);
+  const out = []; let maxRet = -Infinity;
+  for (const p of pts) { if (p.ret > maxRet + 1e-9) { out.push(p); maxRet = p.ret; } }
+  return out;
+}
+
+// Contribución al riesgo (descomposición de Euler): RC_i = w_i·(Σw)_i / (w'Σw). Suma 100%.
+function riskContributions(aligned, weights) {
+  const rets = aligned.cols.map(p => returnsFromPrices(p));
+  const K = rets.length, T = rets[0].length;
+  const means = rets.map(r => Stats.mean(r));
+  // matriz de covarianzas
+  const cov = [];
+  for (let i = 0; i < K; i++) {
+    cov.push([]);
+    for (let j = 0; j < K; j++) {
+      let s = 0;
+      for (let t = 0; t < T; t++) s += (rets[i][t] - means[i]) * (rets[j][t] - means[j]);
+      cov[i][j] = s / (T - 1);
+    }
+  }
+  const sigW = cov.map(row => row.reduce((s, c, j) => s + c * weights[j], 0)); // Σw
+  const portVar = weights.reduce((s, w, i) => s + w * sigW[i], 0);             // w'Σw
+  if (portVar <= 0) return null;
+  return weights.map((w, i) => (w * sigW[i]) / portVar); // fracción del riesgo total
+}
+
+// ---------- RENDER ----------
+function renderPortfolioBlock(metrics) {
+  const section = document.getElementById("portfolio-section");
+  const nonBench = metrics.filter(m => !m.serie.isBenchmark);
+  const benchMetric = metrics.find(m => m.serie.isBenchmark) || null;
+
+  if (nonBench.length < 2) {
+    section.style.display = "none";
+    STATE.pf = null;
+    return;
+  }
+  section.style.display = "block";
+
+  // Usamos alignManyResampled para mezclar frecuencias: si hay un semanal entre los fondos,
+  // todo va a semanal (factor 52) sobre fechas de viernes.
+  const resAll = alignManyResampled(nonBench.map(m => m.serie));
+  const aligned = resAll.aligned;
+  const factor = resAll.factor;
+  // Matriz de correlación: incluye benchmark si existe (también remuestreado al grupo)
+  const corrSeries = benchMetric ? [...nonBench, benchMetric] : nonBench;
+  const resCorr = alignManyResampled(corrSeries.map(m => m.serie));
+  const alignedAll = resCorr.aligned;
+
+  // Aviso de truncado y, si hubo remuestreo, también de frecuencia
+  const commonN = aligned.n;
+  const maxObs = Math.max(...nonBench.map(m => m.obs));
+  const warnEl = document.getElementById("pf-truncate-warn");
+  if (aligned.n >= 2) {
+    const range = `${fmt.date(aligned.dates[0])} → ${fmt.date(aligned.dates[aligned.dates.length - 1])}`;
+    const losing = nonBench.filter(m => m.obs > commonN * 1.02);
+    const severe = commonN < maxObs * 0.8;
+    let detail = losing.length
+      ? ` ${losing.map(m => `${escapeHtml(m.serie.label)} aporta ${m.obs} obs`).join(", ")}, pero la cartera solo usa las ${commonN} comunes.`
+      : "";
+    const resampleNote = resAll.resampled
+      ? ` <strong>Frecuencia común:</strong> ${resAll.freqLabel.toLowerCase()} (factor ${factor}). Las series diarias se han remuestreado a viernes para igualar al fondo de menor frecuencia.`
+      : "";
+    warnEl.className = severe ? "pf-warn severe" : "pf-warn";
+    warnEl.innerHTML = `<strong>Ventana común de análisis:</strong> ${range} · <strong>${commonN}</strong> observaciones.${detail}${resampleNote}` +
+      (severe ? ` <strong>Atención:</strong> el solape común es bastante menor que el histórico del fondo más largo; las métricas de cartera y la frontera solo reflejan ese periodo.` : "");
+    warnEl.style.display = "block";
+  } else {
+    warnEl.style.display = "none";
+  }
+
+  STATE.pf = { aligned, nonBench, benchMetric, factor, freq: resAll.freq };
+
+  drawCorrelationMatrix("chart-corr", corrSeries, alignedAll);
+  renderRegimeCorrelations(nonBench, benchMetric);
+  renderWeightInputs(nonBench);
+
+  // Frontera (cache): solo depende del universo, no de los pesos del usuario
+  STATE.frontierCache = efficientFrontier(aligned, STATE.rf, undefined, factor);
+
+  recalcPortfolio();
+}
+
+function drawCorrelationMatrix(divId, series, aligned) {
+  if (aligned.n < 2) { document.getElementById(divId).innerHTML = '<div class="pf-empty">No hay fechas comunes suficientes para la matriz.</div>'; return; }
+  const rets = aligned.cols.map(p => returnsFromPrices(p));
+  const labels = series.map(m => m.serie.label + (m.serie.isBenchmark ? " (B)" : ""));
+  drawCorrHeatmap(divId, labels, rets);
+}
+
+// Núcleo reutilizable: heatmap de correlaciones a partir de arrays de retornos
+function drawCorrHeatmap(divId, labels, rets, fontSize = 12) {
+  const K = rets.length;
+  const z = [], txt = [];
+  for (let i = 0; i < K; i++) {
+    const row = [], rowT = [];
+    for (let j = 0; j < K; j++) {
+      const c = i === j ? 1 : Stats.corr(rets[i], rets[j]);
+      row.push(c); rowT.push(isFinite(c) ? c.toFixed(2).replace(".", ",") : "—");
+    }
+    z.push(row); txt.push(rowT);
+  }
+  const heat = {
+    z, x: labels, y: labels, type: 'heatmap',
+    zmin: -1, zmax: 1, zmid: 0,
+    colorscale: [[0, '#1E5DA8'], [0.5, '#FFFFFF'], [1, '#C0392B']],
+    text: txt, texttemplate: "%{text}",
+    textfont: { family: "'IBM Plex Mono', monospace", size: fontSize },
+    hovertemplate: "%{y} ↔ %{x}: %{text}<extra></extra>",
+    colorbar: { thickness: 12, len: 0.7, tickvals: [-1, -0.5, 0, 0.5, 1] }
+  };
+  Plotly.newPlot(divId, [heat], {
+    ...PLOTLY_LAYOUT_BASE,
+    margin: { l: 130, r: 60, t: 30, b: 100 },
+    xaxis: { type: "category", side: "bottom", tickangle: -30, linecolor: "transparent" },
+    yaxis: { type: "category", autorange: "reversed", linecolor: "transparent" }
+  }, PLOTLY_CONFIG);
+}
+
+// Media de las correlaciones fuera de la diagonal
+function avgOffDiagCorr(rets) {
+  const K = rets.length; let s = 0, c = 0;
+  for (let i = 0; i < K; i++) for (let j = i + 1; j < K; j++) { const r = Stats.corr(rets[i], rets[j]); if (isFinite(r)) { s += r; c++; } }
+  return c ? s / c : NaN;
+}
+
+// Matrices de correlación separadas por régimen bull/bear del benchmark (en ventana común)
+function renderRegimeCorrelations(nonBench, benchMetric) {
+  const wrap = document.getElementById("pf-regime-corr");
+  if (!benchMetric) {
+    wrap.innerHTML = '<div class="pf-empty">Marca un benchmark para ver las correlaciones por régimen.</div>';
+    return;
+  }
+  const all = [...nonBench, benchMetric];
+  const aligned = alignMany(all.map(m => m.serie));
+  if (aligned.n < 60) { wrap.innerHTML = '<div class="pf-empty">Ventana común insuficiente para separar regímenes.</div>'; return; }
+  const benchIdx = all.length - 1;
+  // Drawdown del benchmark calculado sobre la ventana común
+  const dd = drawdownSeries(aligned.cols[benchIdx]);
+  const threshold = STATE.regimeCorrThreshold || -0.10;
+  // Retornos diarios (t va de 1..n-1; el régimen del día t es el del cierre t)
+  const rets = aligned.cols.map(p => returnsFromPrices(p));
+  const bullIdx = [], bearIdx = [];
+  for (let t = 1; t < aligned.n; t++) (dd[t] <= threshold ? bearIdx : bullIdx).push(t - 1);
+  const labels = nonBench.map(m => m.serie.label);
+  const fundRets = rets.slice(0, benchIdx); // sin el benchmark (consigo mismo no informa)
+  const pick = (arr, idxs) => idxs.map(i => arr[i]);
+  const minObs = 30;
+
+  const thrPct = Math.round(threshold * 100); // -3, -5, -10
+  const thrLabel = `−${Math.abs(thrPct)}%`;
+  const intensityNote = thrPct >= -3
+    ? "Correcciones leves: incluye prácticamente cualquier turbulencia normal del mercado."
+    : thrPct >= -5 ? "Correcciones moderadas: turbulencias significativas pero no necesariamente crisis."
+    : "Caídas serias: episodios bear de calado (sell-offs profundos, recesiones).";
+
+  // Selector de umbral (preserva el activo)
+  const selBtn = (pct, lbl) => `<button class="rolling-win-btn ${threshold === pct ? 'active' : ''}" data-thr="${pct}">${lbl}</button>`;
+  const selectorHTML = `
+    <div class="rolling-window-bar" style="margin:0 0 14px;">
+      <span class="rolling-window-label">Umbral del bear (DD del benchmark):</span>
+      <div class="rolling-window-buttons" id="pf-regime-thr-selector">
+        ${selBtn(-0.03, '−3%')}${selBtn(-0.05, '−5%')}${selBtn(-0.10, '−10%')}
+      </div>
+      <span class="pf-thr-note">${intensityNote}</span>
+    </div>`;
+
+  let html = selectorHTML + '<div class="pf-regime-grid">';
+  html += `<div><div class="pf-regime-title bull">BULL · ${bullIdx.length} días</div><div class="plotly-chart" id="chart-corr-bull"></div></div>`;
+  html += `<div><div class="pf-regime-title bear">BEAR · ${bearIdx.length} días (DD ≤ ${thrLabel})</div><div class="plotly-chart" id="chart-corr-bear"></div></div>`;
+  html += '</div><div class="pf-div-text" id="pf-regime-corr-note" style="margin-top:10px;"></div>';
+  wrap.innerHTML = html;
+
+  const sel = document.getElementById("pf-regime-thr-selector");
+  if (sel) sel.addEventListener("click", e => {
+    const btn = e.target.closest(".rolling-win-btn");
+    if (!btn) return;
+    STATE.regimeCorrThreshold = parseFloat(btn.dataset.thr);
+    renderRegimeCorrelations(nonBench, benchMetric);
+  });
+
+  const noteEl = document.getElementById("pf-regime-corr-note");
+  if (bearIdx.length < minObs) {
+    document.getElementById("chart-corr-bear").innerHTML = `<div class="pf-empty">Solo ${bearIdx.length} días bear en la ventana común con umbral ${thrLabel} (mínimo ${minObs}). Prueba con un umbral menos exigente.</div>`;
+    drawCorrHeatmap("chart-corr-bull", labels, fundRets.map(r => pick(r, bullIdx)), 11);
+    noteEl.textContent = "";
+    return;
+  }
+  const bullRets = fundRets.map(r => pick(r, bullIdx));
+  const bearRets = fundRets.map(r => pick(r, bearIdx));
+  drawCorrHeatmap("chart-corr-bull", labels, bullRets, 11);
+  drawCorrHeatmap("chart-corr-bear", labels, bearRets, 11);
+  const aBull = avgOffDiagCorr(bullRets), aBear = avgOffDiagCorr(bearRets);
+  const delta = aBear - aBull;
+  let verdict;
+  if (delta > 0.15) verdict = "Las correlaciones suben con fuerza en los bears: la diversificación que ves en la media se evapora justo cuando más la necesitas.";
+  else if (delta > 0.05) verdict = "Las correlaciones suben moderadamente en los bears. La diversificación aguanta, pero pierde eficacia en crisis.";
+  else if (delta < -0.05) verdict = "Curioso: las correlaciones bajan en los bears. La diversificación de esta cesta mejora en crisis (poco habitual, verifica que no sea efecto de pocos datos).";
+  else verdict = "Las correlaciones se mantienen estables entre regímenes: la diversificación es robusta al ciclo.";
+  noteEl.innerHTML = `Correlación media entre fondos: <strong>${fmt.num(aBull, 2)}</strong> en bull → <strong>${fmt.num(aBear, 2)}</strong> en bear (${delta >= 0 ? "+" : ""}${fmt.num(delta, 2)}). ${verdict}`;
+}
+
+function renderWeightInputs(universe) {
+  const wrap = document.getElementById("pf-weights");
+  wrap.innerHTML = universe.map(m => `
+    <div class="pf-weight-row">
+      <span class="serie-dot" style="background:${m.serie.color}"></span>
+      <span class="pf-weight-label">${escapeHtml(m.serie.label)}</span>
+      <input type="text" class="pf-weight-input" id="w-${m.serie.id}" value="${(100 / universe.length).toFixed(1).replace(".", ",")}" inputmode="decimal">
+      <span class="pf-weight-pct">%</span>
+    </div>`).join("");
+}
+
+function recalcPortfolio() {
+  if (!STATE.pf) return;
+  const { aligned, nonBench, benchMetric, factor, freq } = STATE.pf;
+  const wRes = readWeights(nonBench);
+  const sumEl = document.getElementById("pf-weight-sum");
+  if (!wRes) {
+    sumEl.textContent = "Introduce pesos válidos (> 0).";
+    sumEl.className = "pf-weight-sum neg";
+    return;
+  }
+  const { weights, rawSum } = wRes;
+  sumEl.textContent = Math.abs(rawSum - 100) < 0.05
+    ? `Suma: 100% ✓`
+    : `Suma introducida: ${rawSum.toFixed(1).replace(".", ",")}% → normalizada a 100% para el cálculo.`;
+  sumEl.className = Math.abs(rawSum - 100) < 0.05 ? "pf-weight-sum pos" : "pf-weight-sum warn";
+
+  const mode = document.querySelector('#pf-rebal-selector .rolling-win-btn.active')?.dataset.mode || 'monthly';
+  const pfData = buildPortfolioSeries(aligned, weights, mode);
+  // La cartera hereda la frecuencia del grupo (factor + freq label) para que anualice correctamente
+  const pfFreq = { freq: freq || 'D', factor: factor || TRADING_DAYS, label: freq === 'S' ? 'Semanal' : freq === 'M' ? 'Mensual' : 'Diaria' };
+  const pfSerie = { id: 'PF', label: 'Cartera', color: PF_COLOR, isBenchmark: false, data: pfData, freq: pfFreq };
+  const pfMetric = computeSerieMetrics(pfSerie);
+
+  // Diversificación (sobre la ventana común, factor del grupo)
+  const indVols = aligned.cols.map(p => annualVol(returnsFromPrices(p), factor));
+  const wAvgVol = weights.reduce((s, w, i) => s + w * indVols[i], 0);
+  const divRatio = wAvgVol / pfMetric.vol;
+
+  renderPortfolioTable(pfMetric, nonBench, benchMetric, weights);
+  const pfVsBench = benchMetric ? computeBenchmarkMetrics(pfSerie, benchMetric.serie) : null;
+  renderPortfolioMetrics(pfMetric, pfVsBench);
+  renderDiversification(divRatio, wAvgVol, pfMetric.vol, mode);
+  renderRiskContribution(nonBench, weights, riskContributions(aligned, weights));
+  renderPortfolioBase100(pfMetric, nonBench, benchMetric);
+  drawFrontier("chart-frontier", weights);
+}
+
+function renderPortfolioTable(pf, universe, benchMetric, weights) {
+  const tbl = document.getElementById("table-portfolio");
+  tbl.querySelector("thead").innerHTML = `<tr>
+    <th>Serie</th><th>Peso</th><th>CAGR</th><th>Vol</th><th>Sharpe</th><th>Sortino</th><th>Máx. DD</th><th>Calmar</th>
+  </tr>`;
+  const rowFor = (m, w, cls) => `<tr class="${cls || ''}">
+    <td><span class="serie-dot" style="background:${m.serie.color}"></span>${escapeHtml(m.serie.label)}${m.serie.isBenchmark ? '<span class="badge">BENCH</span>' : ''}</td>
+    <td>${w == null ? '—' : fmt.pct(w, 1)}</td>
+    <td class="${signClass(m.cagr)}">${fmt.pct(m.cagr)}</td>
+    <td>${fmt.pct(m.vol)}</td>
+    <td class="${signClass(m.sharpe)}">${fmt.num(m.sharpe)}</td>
+    <td class="${signClass(m.sortino)}">${fmt.num(m.sortino)}</td>
+    <td class="neg">${fmt.pct(m.mdd)}</td>
+    <td class="${signClass(m.calmar)}">${fmt.num(m.calmar)}</td>
+  </tr>`;
+  let rows = rowFor(pf, 1, 'pf-row');
+  rows += universe.map((m, i) => rowFor(m, weights[i])).join("");
+  if (benchMetric) rows += rowFor(benchMetric, null, 'bench-row');
+  tbl.querySelector("tbody").innerHTML = rows;
+}
+
+function renderPortfolioMetrics(pf, vs) {
+  const tile = (val, lbl, key, cls) => `
+    <div class="pf-stat">
+      <div class="pf-stat-val ${cls || ''}">${val}</div>
+      <div class="pf-stat-lbl">${lbl}${key ? ' ' + infoBtn(key) : ''}</div>
+    </div>`;
+  const group = (title, tiles) => `
+    <div class="pf-mgroup">
+      <div class="pf-mgroup-title">${title}</div>
+      <div class="pf-stat-grid">${tiles}</div>
+    </div>`;
+
+  const rent = group("Rentabilidad",
+    tile(fmt.pct(pf.total), "Rent. total", "total", signClass(pf.total)) +
+    tile(fmt.pct(pf.cagr), "CAGR", "cagr", signClass(pf.cagr))
+  );
+
+  const riesgo = group("Riesgo absoluto",
+    tile(fmt.pct(pf.vol), "Vol anual", "vol") +
+    tile(fmt.pct(pf.dvol), "Vol downside", "dvol") +
+    tile(fmt.pct(pf.var95), "VaR 95%", "var95", "neg") +
+    tile(fmt.pct(pf.cvar95), "CVaR 95%", "cvar95", "neg") +
+    tile(fmt.pct(pf.mdd), "Máx. DD", "maxdd", "neg") +
+    tile(fmt.pct(pf.pain), "Pain index", "painidx") +
+    tile(fmt.num(pf.ulcer, 2) + " pp", "Ulcer index", "ulceridx") +
+    tile(fmt.num(pf.skew, 2), "Asimetría", "skew") +
+    tile(fmt.num(pf.kurt, 2), "Curtosis", "kurt")
+  );
+
+  const ratios = group("Ratios ajustados al riesgo",
+    tile(fmt.num(pf.sharpe, 2), "Sharpe", "sharpe", signClass(pf.sharpe)) +
+    tile(fmt.num(pf.sortino, 2), "Sortino", "sortino", signClass(pf.sortino)) +
+    tile(fmt.num(pf.calmar, 2), "Calmar", "calmar", signClass(pf.calmar)) +
+    tile(isFinite(pf.omega) ? fmt.num(pf.omega, 2) : "∞", "Omega", "omega") +
+    tile(fmt.num(pf.martin, 2), "Martin", "martin", signClass(pf.martin))
+  );
+
+  let benchGroup = "";
+  if (vs) {
+    if (vs.partial && vs.msg) {
+      benchGroup = group("Frente al benchmark", `<div class="pf-mgroup-msg neg">${vs.msg}</div>`);
+    } else {
+      const partialBadge = vs.partial ? ' <span class="badge warn">parcial</span>' : '';
+      benchGroup = group("Frente al benchmark" + partialBadge,
+        tile(fmt.num(vs.beta, 2), "Beta", "beta") +
+        tile(fmt.pct(vs.alpha), "Alfa Jensen", "alpha", signClass(vs.alpha)) +
+        tile(fmt.num(vs.r2, 3) + (vs.closet ? " ⚠" : ""), "R²" + (vs.closet ? " (closet)" : ""), "r2") +
+        tile(fmt.num(vs.corr, 3), "Correlación", "corr") +
+        tile(fmt.pct(vs.te), "Tracking Error", "te") +
+        tile(fmt.num(vs.ir, 2), "Information Ratio", "ir", signClass(vs.ir)) +
+        tile(fmt.pct(vs.upcap), "Up Capture", "upcap") +
+        tile(fmt.pct(vs.downcap), "Down Capture", "downcap") +
+        tile(fmt.pct(vs.m2), "M² (Modigliani)", "m2")
+      );
+    }
+  }
+
+  document.getElementById("pf-metrics").innerHTML = rent + riesgo + ratios + benchGroup;
+}
+
+function renderDiversification(divRatio, wAvgVol, pfVol, mode) {
+  const el = document.getElementById("pf-diversification");
+  const modeTxt = mode === 'monthly' ? 'rebalanceo mensual' : 'buy-and-hold (sin rebalanceo)';
+  const reduce = (1 - pfVol / wAvgVol) * 100;
+  let verdict;
+  if (!isFinite(divRatio)) verdict = "No calculable.";
+  else if (divRatio >= 1.20) verdict = "Fuerte beneficio de diversificación: los activos se descorrelacionan de forma notable.";
+  else if (divRatio >= 1.05) verdict = "Beneficio de diversificación moderado.";
+  else verdict = "Apenas hay diversificación: los activos se mueven casi en bloque (correlaciones altas).";
+  el.innerHTML = `
+    <div class="pf-div-grid">
+      <div class="pf-div-metric"><div class="pf-div-val">${fmt.num(divRatio)}</div><div class="pf-div-lbl">Ratio de diversificación ${infoBtn('divRatio')}</div></div>
+      <div class="pf-div-metric"><div class="pf-div-val">${fmt.pct(wAvgVol)}</div><div class="pf-div-lbl">Media ponderada de vols</div></div>
+      <div class="pf-div-metric"><div class="pf-div-val">${fmt.pct(pfVol)}</div><div class="pf-div-lbl">Vol real de la cartera</div></div>
+    </div>
+    <p class="pf-div-text">Combinando estos activos (${modeTxt}), la volatilidad de la cartera (${fmt.pct(pfVol)}) es un <strong>${fmt.num(reduce, 1)}%</strong> menor que la media ponderada de las volatilidades individuales (${fmt.pct(wAvgVol)}). ${verdict}</p>`;
+}
+
+function renderRiskContribution(nonBench, weights, rc) {
+  const div = document.getElementById("chart-riskcontrib");
+  const noteEl = document.getElementById("pf-riskcontrib-note");
+  if (!rc) { div.innerHTML = '<div class="pf-empty">No calculable.</div>'; noteEl.textContent = ""; return; }
+  const labels = nonBench.map(m => m.serie.label);
+  const colors = nonBench.map(m => m.serie.color);
+  const tCap = { y: labels, x: weights.map(w => w * 100), name: 'Peso en capital', type: 'bar', orientation: 'h', marker: { color: colors, opacity: 0.35 }, hovertemplate: '%{y}: %{x:.1f}% del capital<extra></extra>' };
+  const tRisk = { y: labels, x: rc.map(r => r * 100), name: 'Peso en riesgo', type: 'bar', orientation: 'h', marker: { color: colors }, hovertemplate: '%{y}: %{x:.1f}% del riesgo<extra></extra>' };
+  Plotly.newPlot("chart-riskcontrib", [tCap, tRisk], {
+    ...PLOTLY_LAYOUT_BASE,
+    barmode: 'group',
+    showlegend: true,
+    legend: { orientation: 'h', y: 1.12 },
+    margin: { l: 130, r: 30, t: 40, b: 50 },
+    xaxis: { ...PLOTLY_LAYOUT_BASE.xaxis, type: 'linear', title: { text: '% del total', standoff: 8 }, ticksuffix: '%', tickformat: '.0f' },
+    yaxis: { type: 'category', autorange: 'reversed', linecolor: 'transparent' }
+  }, PLOTLY_CONFIG);
+  // Lectura automática: mayor desequilibrio riesgo vs capital
+  let worst = 0, idx = -1;
+  rc.forEach((r, i) => { const gap = r - weights[i]; if (gap > worst) { worst = gap; idx = i; } });
+  if (idx >= 0 && worst > 0.05) {
+    noteEl.innerHTML = `<strong>${escapeHtml(labels[idx])}</strong> pesa el ${fmt.pct(weights[idx], 1)} del capital pero aporta el <strong>${fmt.pct(rc[idx], 1)}</strong> del riesgo de la cartera (+${fmt.num(worst * 100, 1)} pp). La diversificación en capital no es diversificación en riesgo.`;
+  } else {
+    noteEl.textContent = "El riesgo está repartido de forma razonablemente proporcional a los pesos.";
+  }
+}
+
+function renderPortfolioBase100(pf, universe, benchMetric) {
+  const traces = [];
+  universe.forEach(m => {
+    // recortar componente a la ventana de la cartera para comparabilidad
+    const sub = m.data.filter(d => d.date.getTime() >= pf.data[0].date.getTime());
+    const factor = 100 / sub[0].vl;
+    traces.push({
+      x: sub.map(d => d.date), y: sub.map(d => d.vl * factor),
+      name: m.serie.label, type: 'scatter', mode: 'lines',
+      line: { color: m.serie.color, width: 1, dash: 'dot' }, opacity: 0.55
+    });
+  });
+  if (benchMetric) {
+    const sub = benchMetric.data.filter(d => d.date.getTime() >= pf.data[0].date.getTime());
+    if (sub.length) {
+      const factor = 100 / sub[0].vl;
+      traces.push({
+        x: sub.map(d => d.date), y: sub.map(d => d.vl * factor),
+        name: benchMetric.serie.label + " (BENCH)", type: 'scatter', mode: 'lines',
+        line: { color: benchMetric.serie.color, width: 1.5, dash: 'dash' }
+      });
+    }
+  }
+  const pfFactor = 100 / pf.data[0].vl;
+  traces.push({
+    x: pf.data.map(d => d.date), y: pf.data.map(d => d.vl * pfFactor),
+    name: "CARTERA", type: 'scatter', mode: 'lines',
+    line: { color: PF_COLOR, width: 3 }
+  });
+  Plotly.newPlot("chart-pf-base100", traces, {
+    ...PLOTLY_LAYOUT_BASE,
+    yaxis: { ...PLOTLY_LAYOUT_BASE.yaxis, title: { text: "Base 100 (ventana común)", standoff: 8 } }
+  }, PLOTLY_CONFIG);
+}
+
+function drawFrontier(divId, userWeights) {
+  const fc = STATE.frontierCache;
+  if (!fc) return;
+  const countEl = document.getElementById("pf-frontier-count");
+  if (countEl) countEl.textContent = `${fc.points.length.toLocaleString('es-ES')} carteras`;
+  const { aligned, nonBench, benchMetric } = STATE.pf;
+  const cloud = {
+    x: fc.points.map(p => p.vol * 100), y: fc.points.map(p => p.ret * 100),
+    mode: 'markers', type: 'scatter', name: 'Carteras posibles',
+    marker: { size: 4, color: fc.points.map(p => p.sharpe), colorscale: [[0, '#C84235'], [0.5, '#C4842A'], [1, '#1F8A8F']], showscale: true, colorbar: { title: { text: 'Sharpe', side: 'right' }, thickness: 12, len: 0.6 }, opacity: 0.45 },
+    hovertemplate: 'Vol %{x:.1f}% · Ret %{y:.1f}%<extra></extra>'
+  };
+  const traces = [cloud];
+  // Línea de frontera eficiente (borde superior izquierdo de la nube)
+  const ef = paretoFrontier(fc.points);
+  traces.push({
+    x: ef.map(p => p.vol * 100), y: ef.map(p => p.ret * 100),
+    mode: 'lines', type: 'scatter', name: 'Frontera eficiente',
+    line: { color: '#0E2340', width: 3, shape: 'spline', smoothing: 0.6 },
+    hoverinfo: 'skip'
+  });
+  // Activos individuales
+  const factor = fc.factor || TRADING_DAYS;
+  fc.means.forEach((mean, i) => {
+    const vol = annualVol(returnsFromPrices(aligned.cols[i]), factor);
+    traces.push({
+      x: [vol * 100], y: [mean * factor * 100], mode: 'markers+text', type: 'scatter',
+      name: nonBench[i].serie.label, text: [nonBench[i].serie.label], textposition: 'top center',
+      textfont: { size: 10, color: nonBench[i].serie.color },
+      marker: { size: 11, color: nonBench[i].serie.color, line: { color: '#fff', width: 1.5 }, symbol: 'circle' },
+      hovertemplate: `${escapeHtml(nonBench[i].serie.label)}<br>Vol %{x:.1f}% · Ret %{y:.1f}%<extra></extra>`
+    });
+  });
+  // Benchmark (también remuestreado al grupo si hace falta)
+  if (benchMetric) {
+    const ba = alignManyResampled([nonBench[0].serie, benchMetric.serie]);
+    const br = returnsFromPrices(ba.aligned.cols[1]);
+    traces.push({
+      x: [annualVol(br, factor) * 100], y: [Stats.mean(br) * factor * 100], mode: 'markers+text', type: 'scatter',
+      name: benchMetric.serie.label, text: ['Bench'], textposition: 'bottom center',
+      textfont: { size: 10, color: benchMetric.serie.color },
+      marker: { size: 12, color: benchMetric.serie.color, symbol: 'diamond', line: { color: '#fff', width: 1.5 } },
+      hovertemplate: `${escapeHtml(benchMetric.serie.label)}<br>Vol %{x:.1f}% · Ret %{y:.1f}%<extra></extra>`
+    });
+  }
+  // Min vol y max Sharpe
+  const mark = (p, name, sym, color) => ({
+    x: [p.vol * 100], y: [p.ret * 100], mode: 'markers+text', type: 'scatter',
+    name, text: [name], textposition: 'top center', textfont: { size: 10, color },
+    marker: { size: 15, color, symbol: sym, line: { color: '#fff', width: 2 } },
+    hovertemplate: `${name}<br>Vol %{x:.1f}% · Ret %{y:.1f}%<extra></extra>`
+  });
+  traces.push(mark(fc.minVol, 'Mín. vol', 'star', '#1F6B47'));
+  traces.push(mark(fc.maxSharpe, 'Máx. Sharpe', 'star', '#7B4F8F'));
+  // Cartera del usuario
+  const up = portfolioRetVol(fc.rets, userWeights, factor);
+  traces.push({
+    x: [up.vol * 100], y: [up.ret * 100], mode: 'markers+text', type: 'scatter',
+    name: 'Tu cartera', text: ['TU CARTERA'], textposition: 'bottom center',
+    textfont: { size: 11, color: PF_COLOR, family: "'IBM Plex Sans', sans-serif" },
+    marker: { size: 16, color: PF_COLOR, symbol: 'x', line: { color: '#fff', width: 1 } },
+    hovertemplate: `Tu cartera<br>Vol %{x:.1f}% · Ret %{y:.1f}%<extra></extra>`
+  });
+  Plotly.newPlot(divId, traces, {
+    ...PLOTLY_LAYOUT_BASE,
+    showlegend: false,
+    xaxis: { ...PLOTLY_LAYOUT_BASE.xaxis, type: 'linear', title: { text: 'Volatilidad anual (%)', standoff: 8 }, ticksuffix: '%', tickformat: '.1f' },
+    yaxis: { ...PLOTLY_LAYOUT_BASE.yaxis, type: 'linear', title: { text: 'Retorno aritmético anualizado (%)', standoff: 8 }, ticksuffix: '%', tickformat: '.1f' }
+  }, PLOTLY_CONFIG);
+  // Pesos de las carteras marcadas
+  const fmtW = p => nonBench.map((m, i) => `${escapeHtml(m.serie.label)} ${(p.w[i] * 100).toFixed(0)}%`).join(" · ");
+  document.getElementById("pf-frontier-weights").innerHTML =
+    `<div class="pf-fw-row"><span class="pf-fw-tag" style="color:#1F6B47">★ Mín. vol</span> ${fmtW(fc.minVol)} <span class="pf-fw-stat">(vol ${fmt.pct(fc.minVol.vol)}, Sharpe ${fmt.num(fc.minVol.sharpe)})</span></div>` +
+    `<div class="pf-fw-row"><span class="pf-fw-tag" style="color:#7B4F8F">★ Máx. Sharpe</span> ${fmtW(fc.maxSharpe)} <span class="pf-fw-stat">(vol ${fmt.pct(fc.maxSharpe.vol)}, Sharpe ${fmt.num(fc.maxSharpe.sharpe)})</span></div>`;
+}
+
+function equalizeWeights() {
+  if (!STATE.pf) return;
+  const u = STATE.pf.nonBench;
+  u.forEach(m => { const el = document.getElementById(`w-${m.serie.id}`); if (el) el.value = (100 / u.length).toFixed(1).replace(".", ","); });
+  recalcPortfolio();
+}
+
+function applyFrontierWeights(which) {
+  if (!STATE.pf || !STATE.frontierCache) return;
+  const p = which === 'minvol' ? STATE.frontierCache.minVol : STATE.frontierCache.maxSharpe;
+  STATE.pf.nonBench.forEach((m, i) => { const el = document.getElementById(`w-${m.serie.id}`); if (el) el.value = (p.w[i] * 100).toFixed(1).replace(".", ","); });
+  recalcPortfolio();
 }
 
 // ============================== MAIN COMPUTE ==============================
@@ -2616,10 +3725,28 @@ function compute() {
 
     const metrics = loaded.map(s => computeSerieMetrics(s));
 
+    // Aviso global de frecuencias
+    const freqs = [...new Set(loaded.map(s => s.freq ? s.freq.freq : 'D'))];
+    const warnFreq = document.getElementById("freq-mix-warn");
+    if (freqs.length > 1) {
+      const detalle = loaded.map(s => `${escapeHtml(s.label)}: ${s.freq.label}`).join(" · ");
+      warnFreq.className = "pf-warn";
+      warnFreq.innerHTML = `<strong>Frecuencias mezcladas detectadas.</strong> ${detalle}. Cada serie se anualiza con su propio factor (252/52/12). Cuando se combinan en la cartera o se calculan métricas vs benchmark, todas se remuestrean a la frecuencia más baja del grupo (alineando al viernes en el caso semanal). Las correlaciones entre semanales suelen ser más altas que entre diarios por la agregación; tenlo en cuenta al interpretar la matriz.`;
+      warnFreq.style.display = "block";
+    } else if (freqs[0] !== 'D') {
+      const fLabel = loaded[0].freq.label.toLowerCase();
+      warnFreq.className = "pf-warn";
+      warnFreq.innerHTML = `<strong>Series con frecuencia ${fLabel}.</strong> Todas las métricas anualizadas usan el factor ${loaded[0].freq.factor} (en lugar de 252). El número de observaciones para significancia estadística es menor que con datos diarios.`;
+      warnFreq.style.display = "block";
+    } else {
+      warnFreq.style.display = "none";
+    }
+
     renderSummary(metrics);
     renderWindows(metrics);
     renderRiskTable(metrics);
     renderRatiosTable(metrics);
+    renderPortfolioBlock(metrics);
     renderBenchmarkTable(metrics);
     renderRegimeSection(metrics);
     renderExtremes(metrics);
@@ -2755,6 +3882,52 @@ addEmptySerie();
 
 document.getElementById("btn-add-serie").addEventListener("click", addEmptySerie);
 document.getElementById("btn-compute").addEventListener("click", compute);
+
+// --- Bloque cartera ---
+document.getElementById("pf-recalc").addEventListener("click", recalcPortfolio);
+document.getElementById("pf-equalize").addEventListener("click", equalizeWeights);
+document.getElementById("pf-apply-minvol").addEventListener("click", () => applyFrontierWeights('minvol'));
+document.getElementById("pf-apply-maxsharpe").addEventListener("click", () => applyFrontierWeights('maxsharpe'));
+document.getElementById("pf-rebal-selector").addEventListener("click", e => {
+  const btn = e.target.closest(".rolling-win-btn");
+  if (!btn) return;
+  document.querySelectorAll("#pf-rebal-selector .rolling-win-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  recalcPortfolio();
+});
+document.getElementById("pf-weights").addEventListener("keydown", e => {
+  if (e.key === "Enter") recalcPortfolio();
+});
+
+// --- Base 100: selector de escala lineal/log + pantalla completa ---
+document.getElementById("base100-scale-selector").addEventListener("click", e => {
+  const btn = e.target.closest(".rolling-win-btn");
+  if (!btn) return;
+  document.querySelectorAll("#base100-scale-selector .rolling-win-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  STATE.base100Scale = btn.dataset.scale;
+  // Recalcular el gráfico con la nueva escala (sin recomputar métricas)
+  const metrics = STATE.series.filter(s => s.data && s.data.length).map(s => ({ serie: s, data: s.data }));
+  if (metrics.length) renderBase100Chart(metrics);
+});
+document.getElementById("base100-fs-btn").addEventListener("click", () => {
+  const card = document.getElementById("base100-card");
+  card.classList.toggle("chart-fullscreen");
+  document.body.classList.toggle("chart-fs-active", card.classList.contains("chart-fullscreen"));
+  // Re-renderizar para que Plotly ajuste tamaño al nuevo contenedor
+  setTimeout(() => Plotly.Plots.resize(document.getElementById("chart-base100")), 50);
+});
+// Escape para salir de fullscreen
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    const card = document.getElementById("base100-card");
+    if (card && card.classList.contains("chart-fullscreen")) {
+      card.classList.remove("chart-fullscreen");
+      document.body.classList.remove("chart-fs-active");
+      setTimeout(() => Plotly.Plots.resize(document.getElementById("chart-base100")), 50);
+    }
+  }
+});
 document.getElementById("btn-export-pdf").addEventListener("click", exportToPDF);
 document.getElementById("btn-reset").addEventListener("click", () => {
   STATE.series = [];
