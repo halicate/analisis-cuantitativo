@@ -20,47 +20,36 @@ document.getElementById("btn").addEventListener("click", () => {
     "_blank"
   );
 
-  const payload = {
-    type: "MOCLANO_ANALYSIS_SERIES",
-    payload: {
-      series: [
-        {
-          label: "Fondo A",
-          data: [
-            { date: "2024-01-01", vl: 100 },
-            { date: "2024-02-01", vl: 101 },
-            { date: "2024-03-01", vl: 103 },
-            { date: "2024-04-01", vl: 104 },
-            { date: "2024-05-01", vl: 106 },
-            { date: "2024-06-01", vl: 108 },
-            { date: "2024-07-01", vl: 107 },
-            { date: "2024-08-01", vl: 110 },
-            { date: "2024-09-01", vl: 112 },
-            { date: "2024-10-01", vl: 115 },
-            { date: "2024-11-01", vl: 117 },
-            { date: "2024-12-01", vl: 120 }
-          ]
-        },
-        {
-          label: "Fondo B",
-          data: [
-            { date: "2024-01-01", vl: 100 },
-            { date: "2024-02-01", vl: 99 },
-            { date: "2024-03-01", vl: 101 },
-            { date: "2024-04-01", vl: 103 },
-            { date: "2024-05-01", vl: 102 },
-            { date: "2024-06-01", vl: 105 },
-            { date: "2024-07-01", vl: 107 },
-            { date: "2024-08-01", vl: 109 },
-            { date: "2024-09-01", vl: 108 },
-            { date: "2024-10-01", vl: 110 },
-            { date: "2024-11-01", vl: 113 },
-            { date: "2024-12-01", vl: 116 }
-          ]
-        }
-      ]
-    }
+  const makeSeries = (name, start, monthlyGrowth) => {
+  const data = [];
+  let value = start;
+
+  for (let i = 0; i < 60; i++) {
+    const d = new Date(2020, i, 1);
+
+    value *= (1 + monthlyGrowth);
+
+    data.push({
+      date: d.toISOString().slice(0, 10),
+      vl: Number(value.toFixed(2))
+    });
+  }
+
+  return {
+    label: name,
+    data
   };
+};
+
+const payload = {
+  type: "MOCLANO_ANALYSIS_SERIES",
+  payload: {
+    series: [
+      makeSeries("Fondo A", 100, 0.008),
+      makeSeries("Fondo B", 100, 0.005)
+    ]
+  }
+};
 
   setTimeout(() => {
     w.postMessage(payload, "*");
