@@ -24,8 +24,9 @@ document.getElementById("btn").addEventListener("click", () => {
   const data = [];
   let value = start;
 
-  for (let i = 0; i < 60; i++) {
-    const d = new Date(2020, i, 1);
+  for (let i = 0; i < 260; i++) {
+    const d = new Date(2020, 0, 1);
+    d.setDate(d.getDate() + i);
 
     value *= (1 + monthlyGrowth);
 
