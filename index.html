@@ -3938,7 +3938,70 @@ document.getElementById("btn-reset").addEventListener("click", () => {
   addEmptySerie();
   addEmptySerie();
 });
+// =============================================================================
+// INTEGRACIÓN EXTERNA · postMessage (Halicate)
+// =============================================================================
+function loadExternalSeriesFromMessage(payload) {
+  if (!payload || !Array.isArray(payload.series)) {
+    throw new Error("Mensaje externo inválido: falta payload.series");
+  }
+
+  const incoming = payload.series.slice(0, MAX_SERIES);
+
+  STATE.series = [];
+  STATE.nextId = 1;
+
+  incoming.forEach((serie, i) => {
+    const rawData = Array.isArray(serie.data) ? serie.data : [];
+    const data = rawData
+      .map(p => ({
+        date: new Date(p.date),
+        vl: Number(p.vl ?? p.value)
+      }))
+      .filter(p => !isNaN(p.date) && isFinite(p.vl) && p.vl > 0)
+      .sort((a, b) => a.date - b.date);
+
+    if (data.length < 30) {
+      throw new Error(`La serie "${serie.label || serie.id || i + 1}" tiene menos de 30 datos válidos.`);
+    }
+
+    let freq = detectFrequency(data);
+    const normalizedData = normalizeWeeklyDates(data, freq.freq);
+    freq = detectFrequency(normalizedData);
+
+    STATE.series.push({
+      id: STATE.nextId++,
+      fileName: serie.fileName || "serie externa",
+      label: serie.label || serie.name || serie.id || `Serie ${i + 1}`,
+      data: normalizedData,
+      freq,
+      color: SERIES_COLORS[i % SERIES_COLORS.length],
+      isBenchmark: !!serie.isBenchmark
+    });
+  });
+
+  renderSeriesList();
+  refreshComputeBtn();
+
+  if (payload.rf != null) {
+    const rfInput = document.getElementById("rf-input");
+    rfInput.value = String(payload.rf).replace(".", ",") + "%";
+  }
+
+  compute();
+}
+
+window.addEventListener("message", event => {
+  try {
+    const msg = event.data;
+    if (!msg || msg.type !== "MOCLANO_ANALYSIS_SERIES") return;
+
+    loadExternalSeriesFromMessage(msg.payload || msg);
+  } catch (err) {
+    showError("Error cargando series externas: " + err.message);
+  }
+});
 </script>
-<!-- Prueba Halicate -->
+
 </body>
 </html>
